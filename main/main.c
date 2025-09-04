@@ -13,10 +13,11 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 
-void app_main(void)
-{
-    printf("Hello world!\n");
 
+#include "drv_gpio_key.h"
+
+static void aiot_esp32_c3_chip_info(void)
+{
     /* Print chip information */
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -41,12 +42,15 @@ void app_main(void)
            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
+}
 
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-    printf("Restarting now.\n");
-    fflush(stdout);
-    esp_restart();
+
+void app_main(void)
+{
+    aiot_esp32_c3_chip_info();
+    aiot_exp32_c3_01_demo_gpio();
+
+
+    while (1);
+
 }
