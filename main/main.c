@@ -15,6 +15,7 @@
 
 
 #include "drv_gpio_key.h"
+#include "drv_i2c_imu.h"
 
 static void aiot_esp32_c3_chip_info(void)
 {
@@ -33,7 +34,8 @@ static void aiot_esp32_c3_chip_info(void)
     unsigned major_rev = chip_info.revision / 100;
     unsigned minor_rev = chip_info.revision % 100;
     printf("silicon revision v%d.%d, ", major_rev, minor_rev);
-    if(esp_flash_get_size(NULL, &flash_size) != ESP_OK) {
+    if (esp_flash_get_size(NULL, &flash_size) != ESP_OK)
+    {
         printf("Get flash size failed");
         return;
     }
@@ -49,8 +51,13 @@ void app_main(void)
 {
     aiot_esp32_c3_chip_info();
     aiot_exp32_c3_01_demo_gpio();
-
-
-    while (1);
+    aiot_exp32_c3_02_demo_i2c_imu();
 
 }
+
+
+
+
+
+
+
