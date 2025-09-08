@@ -130,7 +130,7 @@ void i2c_imu_example_task(void* arg)
     {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         dev_imu_fetch_angleFromAcc(&i2c_imu);
-        ESP_LOGI(TAG, "angle_x = %.1f  angle_y = %.1f angle_z = %.1f", i2c_imu.AngleX, i2c_imu.AngleY, i2c_imu.AngleZ);
+        // ESP_LOGI(TAG, "angle_x = %.1f  angle_y = %.1f angle_z = %.1f", i2c_imu.AngleX, i2c_imu.AngleY, i2c_imu.AngleZ);
     }
 
 }
