@@ -18,17 +18,29 @@
 #define DEV_IMU_ADDR        0x6A
 
 
-typedef struct{
-    int16_t acc_y;
-    int16_t acc_x;
-    int16_t acc_z;
-    int16_t gyr_y;
-    int16_t gyr_x;
-    int16_t gyr_z;
+typedef struct {
+    // origin adc value
+    int16_t raw_acc_x;
+    int16_t raw_acc_y;
+    int16_t raw_acc_z;
+    int16_t raw_gyr_x;
+    int16_t raw_gyr_y;
+    int16_t raw_gyr_z;
+
+    // physical quantity
+    float acc_x;   
+    float acc_y;
+    float acc_z;
+    float gyr_x;   
+    float gyr_y;
+    float gyr_z;
+
+    float Temperature;
+    
     float AngleX;
     float AngleY;
     float AngleZ;
-}t_sQMI8658;
+} t_sQMI8658;
 
 enum qmi8658_reg
 {
@@ -108,8 +120,15 @@ esp_err_t bsp_i2c_init(void);
 
 esp_err_t dev_imu_reg_read_byte(uint8_t reg_addr, uint8_t* data, size_t len);
 esp_err_t dev_imu_reg_write_byte(uint8_t reg_addr, uint8_t data);
-void dev_imu_read_acc_gry(t_sQMI8658* p);
-void dev_imu_fetch_angleFromAcc(t_sQMI8658* p);
+
+void dev_imu_read_temperature(t_sQMI8658* p);
+void dev_imu_read_acceleration(t_sQMI8658* p);
+void dev_imu_read_angular_rate(t_sQMI8658* p);
+
+/* Unimplemented scalable functions */
+void dev_imu_step_count(t_sQMI8658* p);
+void dev_imu_motion_detect(t_sQMI8658* p);
+void dev_imu_fall_detect(t_sQMI8658* p);
 
 esp_err_t dev_imu_init(void);
 

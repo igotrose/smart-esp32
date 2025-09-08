@@ -48,79 +48,105 @@ esp_err_t dev_imu_reg_write_byte(uint8_t reg_addr, uint8_t data)
 
 esp_err_t dev_imu_init(void)
 {
-    uint8_t id = 0;
+    uint8_t id = 0, revision_id = 0;
 
     dev_imu_reg_read_byte(QMI8658_WHO_AM_I, &id, 1);
-    while (id != 0x05)
+    while (id != 0x05 || revision_id != 0x7C)
     {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        dev_imu_reg_read_byte(QMI8658_WHO_AM_I, &id, 1);
+        if (id != 0x05)
+        {
+            dev_imu_reg_read_byte(QMI8658_WHO_AM_I, &id, 1);
+        }
+        else if (revision_id != 0x7C)
+        {
+            dev_imu_reg_read_byte(QMI8658_REVISION_ID, &revision_id, 1);
+        }
     }
-    ESP_LOGI(TAG, "DEV IMU OK");
+    ESP_LOGI(TAG, "DEV IMU ID = 0x%x, REVISION_ID = 0x%x\r\n", id, revision_id);
 
+    // reset dev imu
     dev_imu_reg_write_byte(QMI8658_RESET, 0xb0);
     vTaskDelay(10 / portTICK_PERIOD_MS);
-    dev_imu_reg_write_byte(QMI8658_CTRL1, 0x40);
-    dev_imu_reg_write_byte(QMI8658_CTRL7, 0x03);
-    dev_imu_reg_write_byte(QMI8658_CTRL2, 0x95);
-    dev_imu_reg_write_byte(QMI8658_CTRL3, 0xd5);
 
+    // serial interface and sensor enable  
+    dev_imu_reg_write_byte(QMI8658_CTRL1, 0x40);
+    // accelerometer setting
+    dev_imu_reg_write_byte(QMI8658_CTRL2, 0x05);
+    // gyroscope setting
+    dev_imu_reg_write_byte(QMI8658_CTRL3, 0x55);
+    // sensor data processing setting 
+    dev_imu_reg_write_byte(QMI8658_CTRL5, 0x33);
+    // enable sensor and configure data reads 
+    dev_imu_reg_write_byte(QMI8658_CTRL7, 0x03);
+    // motion detection control
+    dev_imu_reg_write_byte(QMI8658_CTRL8, 0x1f);
 
     return ESP_OK;
 }
 
-void dev_imu_read_acc_gry(t_sQMI8658* p)
+void dev_imu_read_temperature(t_sQMI8658* p)
 {
-    uint8_t status, data_ready = 0;
-    int16_t buf[6];
+    uint8_t temp_h, temp_l;
 
-    dev_imu_reg_read_byte(QMI8658_STATUS0, &status, 1);
-    if (status & 0x03)
-    {
-        data_ready = 1;
-    }
-    if (data_ready)
-    {
-        data_ready = 0;
-        
-        dev_imu_reg_read_byte(QMI8658_AX_L, (uint8_t*)&buf[0], 1);
-        dev_imu_reg_read_byte(QMI8658_AX_H, (uint8_t*)&buf[1], 1);
-        dev_imu_reg_read_byte(QMI8658_AY_L, (uint8_t*)&buf[2], 1);
-        dev_imu_reg_read_byte(QMI8658_AY_H, (uint8_t*)&buf[3], 1);
-        dev_imu_reg_read_byte(QMI8658_AZ_L, (uint8_t*)&buf[4], 1);
-        dev_imu_reg_read_byte(QMI8658_AZ_H, (uint8_t*)&buf[5], 1);
-        dev_imu_reg_read_byte(QMI8658_GX_L, (uint8_t*)&buf[6], 1);
-        dev_imu_reg_read_byte(QMI8658_GX_H, (uint8_t*)&buf[7], 1);
-        dev_imu_reg_read_byte(QMI8658_GY_L, (uint8_t*)&buf[8], 1);
-        dev_imu_reg_read_byte(QMI8658_GY_H, (uint8_t*)&buf[9], 1);
-        dev_imu_reg_read_byte(QMI8658_GZ_L, (uint8_t*)&buf[10], 1);
-        dev_imu_reg_read_byte(QMI8658_GZ_H, (uint8_t*)&buf[11], 1);
+    dev_imu_reg_read_byte(QMI8658_TEMP_H, &temp_h, 1);
+    dev_imu_reg_read_byte(QMI8658_TEMP_L, &temp_l, 1);
 
-        p->acc_x = buf[0];
-        p->acc_y = buf[1];
-        p->acc_z = buf[2];
-        p->gyr_x = buf[3];
-        p->gyr_y = buf[4];
-        p->gyr_z = buf[5];
-    }
+    p->Temperature = temp_h + temp_l / 256.0;
 }
 
-void dev_imu_fetch_angleFromAcc(t_sQMI8658* p)
+void dev_imu_read_acceleration(t_sQMI8658* p)
 {
-    float temp;
+    uint8_t ax_l, ax_h, ay_l, ay_h, az_l, az_h;
+    dev_imu_reg_read_byte(QMI8658_AX_L, &ax_l, 1);
+    dev_imu_reg_read_byte(QMI8658_AX_H, &ax_h, 1);
+    dev_imu_reg_read_byte(QMI8658_AY_L, &ay_l, 1);
+    dev_imu_reg_read_byte(QMI8658_AY_H, &ay_h, 1);
+    dev_imu_reg_read_byte(QMI8658_AZ_L, &az_l, 1);
+    dev_imu_reg_read_byte(QMI8658_AZ_H, &az_h, 1);
 
-    dev_imu_read_acc_gry(p);
+    p->raw_acc_x = (int16_t)((ax_h << 8) | ax_l);
+    p->raw_acc_y = (int16_t)((ay_h << 8) | ay_l);
+    p->raw_acc_z = (int16_t)((az_h << 8) | az_l);
 
-    temp = (float)p->acc_x / sqrt(((float)p->acc_y * (float)p->acc_y + (float)p->acc_z * (float)p->acc_z));
-    p->AngleX = atan(temp) * 57.29578f; // 180/π=57.29578
+#if 0
+    ESP_LOGI(TAG, "Raw Acc: X=%6d, Y=%6d, Z=%6d", p->raw_acc_x, p->raw_acc_y, p->raw_acc_z);
+#endif
+    
+    const float scale_factor = 2.0f / 32768;
 
-    temp = (float)p->acc_y / sqrt(((float)p->acc_x * (float)p->acc_x + (float)p->acc_z * (float)p->acc_z));
-    p->AngleY = atan(temp) * 57.29578f; // 180/π=57.29578
-
-    temp = sqrt(((float)p->acc_x * (float)p->acc_x + (float)p->acc_y * (float)p->acc_y)) / (float)p->acc_z;
-    p->AngleZ = atan(temp) * 57.29578f; // 180/π=57.29578
+    p->acc_x = p->raw_acc_x * scale_factor;
+    p->acc_y = p->raw_acc_y * scale_factor;
+    p->acc_z = p->raw_acc_z * scale_factor;
 
 }
+
+void dev_imu_read_angular_rate(t_sQMI8658* p)
+{
+    uint8_t gx_l, gx_h, gy_l, gy_h, gz_l, gz_h;
+    dev_imu_reg_read_byte(QMI8658_GX_L, &gx_l, 1);
+    dev_imu_reg_read_byte(QMI8658_GX_H, &gx_h, 1);
+    dev_imu_reg_read_byte(QMI8658_GY_L, &gy_l, 1);
+    dev_imu_reg_read_byte(QMI8658_GY_H, &gy_h, 1);
+    dev_imu_reg_read_byte(QMI8658_GZ_L, &gz_l, 1);
+    dev_imu_reg_read_byte(QMI8658_GZ_H, &gz_h, 1);
+
+    p->raw_gyr_x = (int16_t)((gx_h << 8) | gx_l);
+    p->raw_gyr_y = (int16_t)((gy_h << 8) | gy_l);
+    p->raw_gyr_z = (int16_t)((gz_h << 8) | gz_l);
+
+#if 0
+    ESP_LOGI(TAG, "Raw Ang: X=%6d, Y=%6d, Z=%6d", p->raw_gyr_x, p->raw_gyr_y, p->raw_gyr_z);
+#endif
+
+    const float GYRO_SCALE = 2048.0f / 32768.0f;
+
+    p->gyr_x = p->raw_gyr_x * GYRO_SCALE;
+    p->gyr_y = p->raw_gyr_y * GYRO_SCALE;
+    p->gyr_z = p->raw_gyr_z * GYRO_SCALE;
+
+}
+
 void i2c_imu_example_task(void* arg)
 {
     bsp_i2c_init();
@@ -129,8 +155,14 @@ void i2c_imu_example_task(void* arg)
     while (1)
     {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        dev_imu_fetch_angleFromAcc(&i2c_imu);
-        // ESP_LOGI(TAG, "angle_x = %.1f  angle_y = %.1f angle_z = %.1f", i2c_imu.AngleX, i2c_imu.AngleY, i2c_imu.AngleZ);
+        dev_imu_read_temperature(&i2c_imu);
+        dev_imu_read_acceleration(&i2c_imu);
+        dev_imu_read_angular_rate(&i2c_imu);
+#if 1
+        ESP_LOGI(TAG, "Temperature = %.2f °C", i2c_imu.Temperature);
+        ESP_LOGI(TAG, "Acceleration: X=%.2f g, Y=%.2f g, Z=%.2f g", i2c_imu.acc_x, i2c_imu.acc_y, i2c_imu.acc_z);
+        ESP_LOGI(TAG, "Gyro: X=%.2f °/s, Y=%.2f °/s, Z=%.2f °/s", i2c_imu.gyr_x, i2c_imu.gyr_y, i2c_imu.gyr_z);
+#endif
     }
 
 }
