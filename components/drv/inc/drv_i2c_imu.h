@@ -15,10 +15,15 @@
 #define BSP_I2C_NUM         (I2C_NUM_0)
 #define BSP_I2C_FREQ_HZ     100000
 
-#define DEV_IMU_ADDR        0x6A
+#define DEV_IMU_ADDR                0x6A
+#define DEV_IMU_ACC_GYR_DISABLE     0x00
+#define DEV_IMU_ACC_ENABLE         0x01
+#define DEV_IMU_GYR_ENABLE         0x02
+#define DEV_IMU_ACC_GYR_ENABLE     DEV_IMU_ACC_ENABLE | DEV_IMU_GYR_ENABLE
 
 
-typedef struct {
+typedef struct
+{
     // origin adc value
     int16_t raw_acc_x;
     int16_t raw_acc_y;
@@ -28,19 +33,19 @@ typedef struct {
     int16_t raw_gyr_z;
 
     // physical quantity
-    float acc_x;   
+    float acc_x;
     float acc_y;
     float acc_z;
-    float gyr_x;   
+    float gyr_x;
     float gyr_y;
     float gyr_z;
 
     float Temperature;
-    
-    float AngleX;
-    float AngleY;
-    float AngleZ;
-} t_sQMI8658;
+
+    float pitch;
+    float roll;
+    float yaw;
+} qmi8658_data;
 
 enum qmi8658_reg
 {
@@ -114,21 +119,102 @@ enum qmi8658_reg
     QMI8658_RESET = 96
 };
 
-extern 
+enum qmi8658_LPF_Mode
+{                                   /* bandwidth HZ */
+    aLPF_MODE_0 = 0x00 << 1,        /* 2.66% of ODR */
+    aLPF_MODE_1 = 0x01 << 1,        /* 3.63% of ODR */
+    aLPF_MODE_2 = 0x02 << 1,        /* 5.39% of ODR */
+    aLPF_MODE_3 = 0x03 << 1,        /* 13.37% of ODR */
+
+    gLPF_MODE_0 = 0x00 << 5,        /* 2.66% of ODR */
+    gLPF_MODE_1 = 0x01 << 5,        /* 3.63% of ODR */
+    gLPF_MODE_2 = 0x02 << 5,        /* 5.39% of ODR */
+    gLPF_MODE_3 = 0x03 << 5,        /* 13.37% of ODR */
+};
+
+enum qmi8658_accel_range
+{
+    acc_full_scale_2g = 0x00 << 4,
+    acc_full_scale_4g = 0x01 << 4,
+    acc_full_scale_8g = 0x02 << 4,
+    acc_full_scale_16g = 0x03 << 4
+};
+
+enum qmi8658_accel_odr
+{
+    accel_odr_8000Hz = 0x00,
+    accel_odr_4000Hz = 0x01,
+    accel_odr_2000Hz = 0x02,
+    accel_odr_1000Hz = 0x03,
+    accel_odr_500Hz = 0x04,
+    accel_odr_250Hz = 0x05,
+    accel_odr_125Hz = 0x06,
+    accel_odr_62_5Hz = 0x07,
+    accel_odr_31_25Hz = 0x08,
+    accel_odr_LowPower_128Hz = 0x0c,
+    accel_odr_LowPower_21Hz = 0x0d,
+    accel_odr_LowPower_11Hz = 0x0e,
+    accel_odr_LowPower_3Hz = 0x0f
+};
+
+enum qmi8658_gyro_range
+{
+    gyro_range_16dps = 0 << 4,
+    gyro_range_32dps = 1 << 4,
+    gyro_range_64dps = 2 << 4,
+    gyro_range_128dps = 3 << 4,
+    gyro_range_256dps = 4 << 4,
+    gyro_range_512dps = 5 << 4,
+    gyro_range_1024dps = 6 << 4,
+    gyro_range_2048dps = 7 << 4
+};
+
+enum qmi8658_gyro_odr
+{
+    gyro_odr_8000Hz = 0x00,
+    gyro_odr_4000Hz = 0x01,
+    gyro_odr_2000Hz = 0x02,
+    gyro_odr_1000Hz = 0x03,
+    gyro_odr_500Hz = 0x04,
+    gyro_odr_250Hz = 0x05,
+    gyro_odr_125Hz = 0x06,
+    gyro_odr_62_5Hz = 0x07,
+    gyro_odr_31_25Hz = 0x08
+};
+
+typedef struct
+{
+    uint8_t en_sensors;
+    enum qmi8658_accel_range acc_range;
+    enum qmi8658_accel_odr acc_odr;
+    enum qmi8658_gyro_range gyro_range;
+    enum qmi8658_gyro_odr gyro_odr;
+    uint8_t sync_sample;
+};
 
 esp_err_t bsp_i2c_init(void);
 
-esp_err_t dev_imu_reg_read_byte(uint8_t reg_addr, uint8_t* data, size_t len);
-esp_err_t dev_imu_reg_write_byte(uint8_t reg_addr, uint8_t data);
+/* config interface */
+void dev_imu_accelerator_setting(uint8_t self_test,
+                                    enum qmi8658_accel_range range, 
+                                    enum qmi8658_accel_odr odr);
+void dev_imu_gyroscope_setting(uint8_t self_test, 
+                                    enum qmi8658_gyro_range range, 
+                                    enum qmi8658_gyro_odr odr);
+void dev_imu_sensor_data_processing_setting(enum qmi8658_LPF_Mode gLPF_MODE, 
+                                                uint8_t gLPF_EN, 
+                                                enum qmi8658_LPF_Mode aLPF_MODE, 
+                                                uint8_t aLPF_EN);
+/* read interface */
+void dev_imu_read_temperature(qmi8658_data* p);
+void dev_imu_read_acceleration(qmi8658_data* p);
+void dev_imu_read_angular_rate(qmi8658_data* p);
 
-void dev_imu_read_temperature(t_sQMI8658* p);
-void dev_imu_read_acceleration(t_sQMI8658* p);
-void dev_imu_read_angular_rate(t_sQMI8658* p);
-
-/* Unimplemented scalable functions */
-void dev_imu_step_count(t_sQMI8658* p);
-void dev_imu_motion_detect(t_sQMI8658* p);
-void dev_imu_fall_detect(t_sQMI8658* p);
+/* function interface */
+void dev_imu_in_low_power_mode(bool lowpower);
+void dev_imu_step_count(qmi8658_data* p);
+void dev_imu_motion_detect(qmi8658_data* p);
+void dev_imu_fall_detect(qmi8658_data* p);
 
 esp_err_t dev_imu_init(void);
 
