@@ -16,6 +16,7 @@
 
 #include "drv_gpio_key.h"
 #include "drv_i2c_imu.h"
+#include "drv_sdio_sdcard.h"
 
 static void aiot_esp32_c3_chip_info(void)
 {
