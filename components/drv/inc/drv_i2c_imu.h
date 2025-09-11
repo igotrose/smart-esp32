@@ -13,39 +13,22 @@
 #define BSP_I2C_SCL         (GPIO_NUM_2)
 
 #define BSP_I2C_NUM         (I2C_NUM_0)
-#define BSP_I2C_FREQ_HZ     100000
+#define BSP_I2C_FREQ_HZ     (100000)
 
-#define DEV_IMU_ADDR                0x6A
-#define DEV_IMU_ACC_GYR_DISABLE     0x00
-#define DEV_IMU_ACC_ENABLE         0x01
-#define DEV_IMU_GYR_ENABLE         0x02
-#define DEV_IMU_ACC_GYR_ENABLE     DEV_IMU_ACC_ENABLE | DEV_IMU_GYR_ENABLE
+#define DEV_IMU_ADDR                (0x6A)
+#define DEV_IMU_ONE_G               (9.807f)  
+#define DEV_IMU_M_PAI               (3.14159265358979323846f)
 
+#define DEV_IMU_ACC_GYR_DISABLE     (0x0)
+#define DEV_IMU_ACC_ENABLE          (0x1)
+#define DEV_IMU_GYR_ENABLE          (0x2)
+#define DEV_IMU_ACC_GYR_ENABLE      DEV_IMU_ACC_ENABLE | DEV_IMU_GYR_ENABLE
 
-typedef struct
-{
-    // origin adc value
-    int16_t raw_acc_x;
-    int16_t raw_acc_y;
-    int16_t raw_acc_z;
-    int16_t raw_gyr_x;
-    int16_t raw_gyr_y;
-    int16_t raw_gyr_z;
+#define MAX_CALI_COUNT (100)
 
-    // physical quantity
-    float acc_x;
-    float acc_y;
-    float acc_z;
-    float gyr_x;
-    float gyr_y;
-    float gyr_z;
-
-    float Temperature;
-
-    float pitch;
-    float roll;
-    float yaw;
-} qmi8658_data;
+#define IMU_DELTA_T     (0.0900f)                   /* sample time */
+#define DEG2RAD         0.017453293f                /* deg to rad  */
+#define RAD2DEG         57.295779513f               /* rad to deg */
 
 enum qmi8658_reg
 {
@@ -189,36 +172,42 @@ typedef struct
     enum qmi8658_accel_odr acc_odr;
     enum qmi8658_gyro_range gyro_range;
     enum qmi8658_gyro_odr gyro_odr;
-    uint8_t sync_sample;
-};
+    unsigned short ssvt_a;
+    unsigned short ssvt_g;
+}dev_imu_config_t;
+
+typedef struct
+{
+    dev_imu_config_t imu_cfg;
+    float acc[3];
+    float gyr[3];
+    float ang[3];
+    float temperature;
+}dev_imu_data;
 
 esp_err_t bsp_i2c_init(void);
 
 /* config interface */
-void dev_imu_accelerator_setting(uint8_t self_test,
-                                    enum qmi8658_accel_range range, 
-                                    enum qmi8658_accel_odr odr);
-void dev_imu_gyroscope_setting(uint8_t self_test, 
-                                    enum qmi8658_gyro_range range, 
-                                    enum qmi8658_gyro_odr odr);
-void dev_imu_sensor_data_processing_setting(enum qmi8658_LPF_Mode gLPF_MODE, 
-                                                uint8_t gLPF_EN, 
-                                                enum qmi8658_LPF_Mode aLPF_MODE, 
-                                                uint8_t aLPF_EN);
+void dev_imu_sensors_enable(uint8_t enable);
+void dev_imu_accelerator_setting(uint8_t self_test, enum qmi8658_accel_range range, enum qmi8658_accel_odr odr);
+void dev_imu_gyroscope_setting(uint8_t self_test, enum qmi8658_gyro_range range, enum qmi8658_gyro_odr odr);
+void dev_imu_filter_setting(enum qmi8658_LPF_Mode gLPF_MODE, uint8_t gLPF_EN, enum qmi8658_LPF_Mode aLPF_MODE, uint8_t aLPF_EN);
+
+void dev_imu_running_mode(bool low_power_mode);
+
 /* read interface */
-void dev_imu_read_temperature(qmi8658_data* p);
-void dev_imu_read_acceleration(qmi8658_data* p);
-void dev_imu_read_angular_rate(qmi8658_data* p);
+void dev_imu_read_temperature(float* temperature);
+void dev_imu_read_accelerometer_gyroscope(float* acc, float* gyr);
+void dev_imu_read_accelerometer_gyroscope_after_judge(float* acc, float* gyr);
+void dev_imu_get_eulerian_angels(float* acc, float* gyr, float* ang, float dt);
 
 /* function interface */
-void dev_imu_in_low_power_mode(bool lowpower);
-void dev_imu_step_count(qmi8658_data* p);
-void dev_imu_motion_detect(qmi8658_data* p);
-void dev_imu_fall_detect(qmi8658_data* p);
+// void dev_imu_step_count(qmi8658_data* p);
+// void dev_imu_motion_detect(qmi8658_data* p);
+// void dev_imu_fall_detect(qmi8658_data* p);
 
 esp_err_t dev_imu_init(void);
 
 void aiot_exp32_c3_02_demo_i2c_imu(void);
-
 
 #endif /* _DRV_I2C_IMU_H_ */
