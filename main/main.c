@@ -53,7 +53,7 @@ void app_main(void)
     aiot_esp32_c3_chip_info();
     aiot_exp32_c3_01_demo_gpio();
     aiot_exp32_c3_02_demo_i2c_imu();
-
+    aiot_exp32_c3_03_demo_sdio_sdcard();
 }
 
 
