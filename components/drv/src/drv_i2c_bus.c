@@ -4,7 +4,7 @@ static const char* TAG = "DRV_I2C_BUS";
 
 static i2c_master_bus_handle_t  i2c_bus_handle = NULL;
 
-esp_err_t drv_i2c_bus_init(void)
+esp_err_t dev_i2c_bus_init(void)
 {
     if (i2c_bus_handle)
     {
@@ -34,7 +34,7 @@ esp_err_t drv_i2c_bus_init(void)
     return ESP_OK;
 }
 
-esp_err_t drv_i2c_bus_add_devices(uint8_t dev_addr, i2c_master_dev_handle_t* handle)
+esp_err_t dev_i2c_bus_add_devices(uint8_t dev_addr, i2c_master_dev_handle_t* handle)
 {
     if (i2c_bus_handle == NULL)
     {
@@ -65,7 +65,7 @@ esp_err_t drv_i2c_bus_add_devices(uint8_t dev_addr, i2c_master_dev_handle_t* han
     return ESP_OK;
 }
 
-esp_err_t drv_i2c_bus_remove_devices(i2c_master_dev_handle_t* handle)
+esp_err_t dev_i2c_bus_remove_devices(i2c_master_dev_handle_t* handle)
 {
     if (i2c_bus_handle == NULL)
     {
@@ -91,7 +91,7 @@ esp_err_t drv_i2c_bus_remove_devices(i2c_master_dev_handle_t* handle)
     return ESP_OK;
 }
 
-esp_err_t drv_i2c_bus_deinit(void)
+esp_err_t dev_i2c_bus_deinit(void)
 {
     if (i2c_bus_handle == NULL)
     {

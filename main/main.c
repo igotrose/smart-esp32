@@ -17,6 +17,7 @@
 #include "drv_gpio_key.h"
 #include "drv_i2c_imu.h"
 #include "drv_sdio_sdcard.h"
+#include "drv_i2c_io_expander.h"
 
 static void aiot_esp32_s3_chip_info(void)
 {
@@ -51,9 +52,11 @@ static void aiot_esp32_s3_all_init(void)
 {
     aiot_esp32_s3_chip_info();
 
-    drv_i2c_bus_init();
+    dev_i2c_bus_init();
 
     dev_imu_init();
+
+    dev_io_expander_init();
     
 
 }
@@ -63,7 +66,8 @@ void app_main(void)
     aiot_esp32_s3_all_init();
     aiot_esp32_s3_01_demo_gpio();
     aiot_esp32_s3_02_demo_i2c_imu();
-    // aiot_esp32_s3_03_demo_sdio_sdcard();
+    aiot_esp32_s3_03_demo_sdio_sdcard();
+    aiot_esp32_s3_04_demo_io_expander();
 }
 
 

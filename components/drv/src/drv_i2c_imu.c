@@ -32,7 +32,7 @@ esp_err_t dev_imu_reg_write_byte(uint8_t reg_addr, uint8_t data)
 
 esp_err_t dev_imu_init(void)
 {
-    esp_err_t err = drv_i2c_bus_add_devices(DEV_IMU_ADDR, &imu_dev_handle);
+    esp_err_t err = dev_i2c_bus_add_devices(DEV_IMU_ADDR, &imu_dev_handle);
 
     if (err != ESP_OK)
     {
