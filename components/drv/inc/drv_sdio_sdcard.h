@@ -26,7 +26,7 @@ esp_err_t dev_sdcard_get_status(sdmmc_card_t* card);
 #define dev_sdcard_init     bsp_sdio_init
 esp_err_t dev_sdcard_umount(void);
 
-void aiot_exp32_c3_03_demo_sdio_sdcard(void);
+void aiot_esp32_s3_03_demo_sdio_sdcard(void);
 
 
 #endif

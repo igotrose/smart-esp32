@@ -2,54 +2,44 @@
 
 static char* TAG = "DRV_I2C_IMU";
 
-i2c_master_bus_handle_t bus_handle = { 0 };
-i2c_master_dev_handle_t dev_handle = { 0 };
-
+i2c_master_dev_handle_t imu_dev_handle;
 dev_imu_data dev_imu = { 0 };
 
 static uint8_t imu_calibrated = 0;
 
-esp_err_t bsp_i2c_init(void)
-{
-    i2c_master_bus_config_t i2c_mst_config =
-    {
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .flags.enable_internal_pullup = true,
-        .glitch_ignore_cnt = 7,
-        .i2c_port = BSP_I2C_NUM,
-        .scl_io_num = BSP_I2C_SCL,
-        .sda_io_num = BSP_I2C_SDA,
-    };
-
-    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
-
-    i2c_device_config_t dev_cfg = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .scl_speed_hz = BSP_I2C_FREQ_HZ,
-        .device_address = DEV_IMU_ADDR,
-    };
-
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle));
-
-    ESP_LOGI(TAG, "I2C bus init OK");
-
-    return ESP_OK;
-}
-
 esp_err_t dev_imu_reg_read_byte(uint8_t reg_addr, uint8_t* data, size_t len)
 {
-    return i2c_master_transmit_receive(dev_handle, &reg_addr, 1, data, len, -1);
+    if (imu_dev_handle == NULL)
+    {
+        ESP_LOGE(TAG, "%s: imu_dev_handle is NULL", __FUNCTION__);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    return i2c_master_transmit_receive(imu_dev_handle, &reg_addr, 1, data, len, -1);
 }
 
 esp_err_t dev_imu_reg_write_byte(uint8_t reg_addr, uint8_t data)
 {
+    if (imu_dev_handle == NULL)
+    {
+        ESP_LOGE(TAG, "IMU device handle is NULL");
+        return ESP_ERR_INVALID_STATE;
+    }
     uint8_t write_buffer[] = { reg_addr, data };
 
-    return i2c_master_transmit(dev_handle, (const uint8_t*)write_buffer, sizeof(write_buffer), (1000 / portTICK_PERIOD_MS));
+    return i2c_master_transmit(imu_dev_handle, (const uint8_t*)write_buffer, sizeof(write_buffer), (1000 / portTICK_PERIOD_MS));
 }
 
 esp_err_t dev_imu_init(void)
 {
+    esp_err_t err = drv_i2c_bus_add_devices(DEV_IMU_ADDR, &imu_dev_handle);
+
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to add IMU device");
+        return err;
+    }
+
     uint8_t id = 0, revision_id = 0;
 
     for (int i = 0; i < 10; i++)
@@ -569,8 +559,7 @@ void dev_imu_get_eulerian_angels(float* acc, float* gyr, float* ang, float dt)
 
 void i2c_imu_example_task(void* arg)
 {
-    bsp_i2c_init();
-    dev_imu_init();
+
 
     while (1)
     {
@@ -598,7 +587,7 @@ void i2c_imu_example_task(void* arg)
     }
 }
 
-void aiot_exp32_c3_02_demo_i2c_imu(void)
+void aiot_esp32_s3_02_demo_i2c_imu(void)
 {
     xTaskCreate(i2c_imu_example_task, "i2c_imu_example_task", 4096, NULL, 5, NULL);
 }

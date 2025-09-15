@@ -20,7 +20,7 @@ static void gpio_task_example(void* parameters)
     }
 }
 
-void aiot_exp32_c3_01_demo_gpio(void)
+void aiot_esp32_s3_01_demo_gpio(void)
 {
     gpio_config_t io0_conf = {
         .intr_type = GPIO_INTR_NEGEDGE,

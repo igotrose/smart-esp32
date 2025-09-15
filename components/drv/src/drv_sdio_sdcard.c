@@ -109,7 +109,7 @@ esp_err_t dev_sdcard_umount(void)
     }
     return ESP_OK;
 }
-void aiot_exp32_c3_03_demo_sdio_sdcard(void)
+void aiot_esp32_s3_03_demo_sdio_sdcard(void)
 {
     dev_sdcard_init();
     dev_sdcard_write_file("/sdcard/test.txt", "Hello, world!\n");

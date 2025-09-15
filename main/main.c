@@ -18,7 +18,7 @@
 #include "drv_i2c_imu.h"
 #include "drv_sdio_sdcard.h"
 
-static void aiot_esp32_c3_chip_info(void)
+static void aiot_esp32_s3_chip_info(void)
 {
     /* Print chip information */
     esp_chip_info_t chip_info;
@@ -47,13 +47,23 @@ static void aiot_esp32_c3_chip_info(void)
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 }
 
+static void aiot_esp32_s3_all_init(void)
+{
+    aiot_esp32_s3_chip_info();
+
+    drv_i2c_bus_init();
+
+    dev_imu_init();
+    
+
+}
 
 void app_main(void)
 {
-    aiot_esp32_c3_chip_info();
-    aiot_exp32_c3_01_demo_gpio();
-    aiot_exp32_c3_02_demo_i2c_imu();
-    aiot_exp32_c3_03_demo_sdio_sdcard();
+    aiot_esp32_s3_all_init();
+    aiot_esp32_s3_01_demo_gpio();
+    aiot_esp32_s3_02_demo_i2c_imu();
+    // aiot_esp32_s3_03_demo_sdio_sdcard();
 }
 
 

@@ -2,18 +2,11 @@
 #define _DRV_I2C_IMU_H_
 
 #include "freertos/FreeRTOS.h"
-#include "driver/gpio.h"
-#include "driver/i2c_master.h"
-#include "esp_err.h"
-#include "esp_log.h"
+#include "drv_i2c_bus.h"
 
 #include "math.h"
 
-#define BSP_I2C_SDA         (GPIO_NUM_1)
-#define BSP_I2C_SCL         (GPIO_NUM_2)
-
-#define BSP_I2C_NUM         (I2C_NUM_0)
-#define BSP_I2C_FREQ_HZ     (100000)
+extern i2c_master_dev_handle_t imu_dev_handle;
 
 #define DEV_IMU_ADDR                (0x6A)
 #define DEV_IMU_ONE_G               (9.807f)  
@@ -185,8 +178,6 @@ typedef struct
     float temperature;
 }dev_imu_data;
 
-esp_err_t bsp_i2c_init(void);
-
 /* config interface */
 void dev_imu_sensors_enable(uint8_t enable);
 void dev_imu_accelerator_setting(uint8_t self_test, enum qmi8658_accel_range range, enum qmi8658_accel_odr odr);
@@ -208,6 +199,6 @@ void dev_imu_get_eulerian_angels(float* acc, float* gyr, float* ang, float dt);
 
 esp_err_t dev_imu_init(void);
 
-void aiot_exp32_c3_02_demo_i2c_imu(void);
+void aiot_esp32_s3_02_demo_i2c_imu(void);
 
 #endif /* _DRV_I2C_IMU_H_ */
