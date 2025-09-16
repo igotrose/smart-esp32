@@ -22,10 +22,11 @@
 #define IO_EXPANDER_IO7                         0x80
 
 esp_err_t dev_io_expander_init(void);
+esp_err_t dev_io_expander_get_mode(uint8_t pin, uint8_t* mode);
 esp_err_t dev_io_expander_set_mode(uint8_t pin, uint8_t mode);
 esp_err_t dev_io_expander_get_input_value(uint8_t pin, uint8_t* pin_value);
 esp_err_t dev_io_expander_set_output_value(uint8_t pin, uint8_t pin_value);
-esp_err_t dev_io_expander_set_polarity_inversion(uint8_t pin, uint8_t polarity);
+esp_err_t dev_io_expander_get_output_value(uint8_t pin, uint8_t* pin_value);
 
 void aiot_esp32_s3_04_demo_io_expander(void);
 
