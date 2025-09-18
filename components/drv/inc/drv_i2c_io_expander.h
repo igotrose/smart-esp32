@@ -21,6 +21,10 @@
 #define IO_EXPANDER_IO6                         0x40
 #define IO_EXPANDER_IO7                         0x80
 
+#define LCD_CS                                  IO_EXPANDER_IO0
+#define PA_EN                                   IO_EXPANDER_IO1  
+#define DVP_PWDN                                IO_EXPANDER_IO2
+
 esp_err_t dev_io_expander_init(void);
 esp_err_t dev_io_expander_get_mode(uint8_t pin, uint8_t* mode);
 esp_err_t dev_io_expander_set_mode(uint8_t pin, uint8_t mode);

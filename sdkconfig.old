@@ -1046,24 +1046,16 @@ CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
 # CONFIG_ESPTOOLPY_FLASHFREQ_20M is not set
 # default:
 CONFIG_ESPTOOLPY_FLASHFREQ="80m"
-# default:
 # CONFIG_ESPTOOLPY_FLASHSIZE_1MB is not set
-# default:
-CONFIG_ESPTOOLPY_FLASHSIZE_2MB=y
-# default:
+# CONFIG_ESPTOOLPY_FLASHSIZE_2MB is not set
 # CONFIG_ESPTOOLPY_FLASHSIZE_4MB is not set
-# default:
 # CONFIG_ESPTOOLPY_FLASHSIZE_8MB is not set
-# default:
-# CONFIG_ESPTOOLPY_FLASHSIZE_16MB is not set
-# default:
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 # CONFIG_ESPTOOLPY_FLASHSIZE_32MB is not set
-# default:
 # CONFIG_ESPTOOLPY_FLASHSIZE_64MB is not set
-# default:
 # CONFIG_ESPTOOLPY_FLASHSIZE_128MB is not set
 # default:
-CONFIG_ESPTOOLPY_FLASHSIZE="2MB"
+CONFIG_ESPTOOLPY_FLASHSIZE="16MB"
 # default:
 # CONFIG_ESPTOOLPY_HEADER_FLASHSIZE_UPDATE is not set
 # default:
@@ -1585,6 +1577,17 @@ CONFIG_ESP_INTR_IN_IRAM=y
 # end of Hardware Settings
 
 #
+# ESP-Driver:LCD Controller Configurations
+#
+# default:
+# CONFIG_LCD_ENABLE_DEBUG_LOG is not set
+# default:
+# CONFIG_LCD_RGB_ISR_IRAM_SAFE is not set
+# default:
+# CONFIG_LCD_RGB_RESTART_IN_VSYNC is not set
+# end of ESP-Driver:LCD Controller Configurations
+
+#
 # ESP-MM: Memory Management Configurations
 #
 # default:
@@ -1610,6 +1613,13 @@ CONFIG_PM_POWER_DOWN_CPU_IN_LIGHT_SLEEP=y
 # default:
 CONFIG_PM_RESTORE_CACHE_TAGMEM_AFTER_LIGHT_SLEEP=y
 # end of Power Management
+
+#
+# ESP PSRAM
+#
+# default:
+# CONFIG_SPIRAM is not set
+# end of ESP PSRAM
 
 #
 # ESP Ringbuf
@@ -1840,6 +1850,102 @@ CONFIG_ESP_TIMER_ISR_AFFINITY_CPU0=y
 # default:
 CONFIG_ESP_TIMER_IMPL_SYSTIMER=y
 # end of ESP Timer (High Resolution Timer)
+
+#
+# FAT Filesystem support
+#
+# default:
+CONFIG_FATFS_VOLUME_COUNT=2
+# default:
+CONFIG_FATFS_LFN_NONE=y
+# default:
+# CONFIG_FATFS_LFN_HEAP is not set
+# default:
+# CONFIG_FATFS_LFN_STACK is not set
+# default:
+# CONFIG_FATFS_SECTOR_512 is not set
+# default:
+CONFIG_FATFS_SECTOR_4096=y
+# default:
+# CONFIG_FATFS_CODEPAGE_DYNAMIC is not set
+# default:
+CONFIG_FATFS_CODEPAGE_437=y
+# default:
+# CONFIG_FATFS_CODEPAGE_720 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_737 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_771 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_775 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_850 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_852 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_855 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_857 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_860 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_861 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_862 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_863 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_864 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_865 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_866 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_869 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_932 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_936 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_949 is not set
+# default:
+# CONFIG_FATFS_CODEPAGE_950 is not set
+# default:
+CONFIG_FATFS_CODEPAGE=437
+# default:
+CONFIG_FATFS_FS_LOCK=0
+# default:
+CONFIG_FATFS_TIMEOUT_MS=10000
+# default:
+CONFIG_FATFS_PER_FILE_CACHE=y
+# default:
+# CONFIG_FATFS_USE_FASTSEEK is not set
+# default:
+CONFIG_FATFS_USE_STRFUNC_NONE=y
+# default:
+# CONFIG_FATFS_USE_STRFUNC_WITHOUT_CRLF_CONV is not set
+# default:
+# CONFIG_FATFS_USE_STRFUNC_WITH_CRLF_CONV is not set
+# default:
+CONFIG_FATFS_VFS_FSTAT_BLKSIZE=0
+# default:
+# CONFIG_FATFS_IMMEDIATE_FSYNC is not set
+# default:
+# CONFIG_FATFS_USE_LABEL is not set
+# default:
+CONFIG_FATFS_LINK_LOCK=y
+# default:
+# CONFIG_FATFS_USE_DYN_BUFFERS is not set
+
+#
+# File system free space calculation behavior
+#
+# default:
+CONFIG_FATFS_DONT_TRUST_FREE_CLUSTER_CNT=0
+# default:
+CONFIG_FATFS_DONT_TRUST_LAST_ALLOC=0
+# end of File system free space calculation behavior
+# end of FAT Filesystem support
 
 #
 # FreeRTOS
@@ -2101,6 +2207,8 @@ CONFIG_MBEDTLS_COMPILER_OPTIMIZATION_NONE=y
 # CONFIG_MBEDTLS_COMPILER_OPTIMIZATION_SIZE is not set
 # default:
 # CONFIG_MBEDTLS_COMPILER_OPTIMIZATION_PERF is not set
+# default:
+CONFIG_MBEDTLS_FS_IO=y
 # default:
 # CONFIG_MBEDTLS_THREADING_C is not set
 # default:
@@ -2497,6 +2605,18 @@ CONFIG_LIBC_MISC_IN_IRAM=y
 # default:
 CONFIG_LIBC_LOCKS_PLACE_IN_IRAM=y
 # default:
+CONFIG_LIBC_STDOUT_LINE_ENDING_CRLF=y
+# default:
+# CONFIG_LIBC_STDOUT_LINE_ENDING_LF is not set
+# default:
+# CONFIG_LIBC_STDOUT_LINE_ENDING_CR is not set
+# default:
+# CONFIG_LIBC_STDIN_LINE_ENDING_CRLF is not set
+# default:
+# CONFIG_LIBC_STDIN_LINE_ENDING_LF is not set
+# default:
+CONFIG_LIBC_STDIN_LINE_ENDING_CR=y
+# default:
 # CONFIG_LIBC_NEWLIB_NANO_FORMAT is not set
 # default:
 CONFIG_LIBC_TIME_SYSCALL_USE_RTC_HRT=y
@@ -2655,246 +2775,47 @@ CONFIG_SPI_FLASH_SUPPORT_MXIC_OPI_CHIP=y
 # default:
 CONFIG_SPI_FLASH_ENABLE_ENCRYPTED_READ_WRITE=y
 # end of SPI Flash driver
+
+#
+# Virtual file system
+#
+# default:
+CONFIG_VFS_SUPPORT_IO=y
+# default:
+CONFIG_VFS_SUPPORT_DIR=y
+# default:
+CONFIG_VFS_SUPPORT_SELECT=y
+# default:
+CONFIG_VFS_SUPPRESS_SELECT_DEBUG_OUTPUT=y
+# default:
+# CONFIG_VFS_SELECT_IN_RAM is not set
+# default:
+CONFIG_VFS_SUPPORT_TERMIOS=y
+# default:
+CONFIG_VFS_MAX_COUNT=8
+
+#
+# Host File System I/O (Semihosting)
+#
+# default:
+CONFIG_VFS_SEMIHOSTFS_MAX_MOUNT_POINTS=1
+# end of Host File System I/O (Semihosting)
+
+# default:
+CONFIG_VFS_INITIALIZE_DEV_NULL=y
+# end of Virtual file system
+
+#
+# Wear Levelling
+#
+# default:
+# CONFIG_WL_SECTOR_SIZE_512 is not set
+# default:
+CONFIG_WL_SECTOR_SIZE_4096=y
+# default:
+CONFIG_WL_SECTOR_SIZE=4096
+# end of Wear Levelling
 # end of Component config
 
 # default:
 # CONFIG_IDF_EXPERIMENTAL_FEATURES is not set
-
-# Deprecated options for backward compatibility
-# default:
-# CONFIG_APP_BUILD_TYPE_ELF_RAM is not set
-# default:
-# CONFIG_NO_BLOBS is not set
-# default:
-# CONFIG_APP_ROLLBACK_ENABLE is not set
-# default:
-# CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_NONE is not set
-# default:
-# CONFIG_LOG_BOOTLOADER_LEVEL_NONE is not set
-# default:
-# CONFIG_LOG_BOOTLOADER_LEVEL_ERROR is not set
-# default:
-# CONFIG_LOG_BOOTLOADER_LEVEL_WARN is not set
-# default:
-CONFIG_LOG_BOOTLOADER_LEVEL_INFO=y
-# default:
-# CONFIG_LOG_BOOTLOADER_LEVEL_DEBUG is not set
-# default:
-# CONFIG_LOG_BOOTLOADER_LEVEL_VERBOSE is not set
-# default:
-CONFIG_LOG_BOOTLOADER_LEVEL=3
-# default:
-# CONFIG_FLASH_ENCRYPTION_ENABLED is not set
-# default:
-# CONFIG_FLASHMODE_QIO is not set
-# default:
-# CONFIG_FLASHMODE_QOUT is not set
-# default:
-CONFIG_FLASHMODE_DIO=y
-# default:
-# CONFIG_FLASHMODE_DOUT is not set
-# default:
-CONFIG_MONITOR_BAUD=115200
-# default:
-CONFIG_OPTIMIZATION_LEVEL_DEBUG=y
-# default:
-CONFIG_COMPILER_OPTIMIZATION_LEVEL_DEBUG=y
-# default:
-CONFIG_COMPILER_OPTIMIZATION_DEFAULT=y
-# default:
-# CONFIG_OPTIMIZATION_LEVEL_RELEASE is not set
-# default:
-# CONFIG_COMPILER_OPTIMIZATION_LEVEL_RELEASE is not set
-# default:
-CONFIG_OPTIMIZATION_ASSERTIONS_ENABLED=y
-# default:
-# CONFIG_OPTIMIZATION_ASSERTIONS_SILENT is not set
-# default:
-# CONFIG_OPTIMIZATION_ASSERTIONS_DISABLED is not set
-# default:
-CONFIG_OPTIMIZATION_ASSERTION_LEVEL=2
-# default:
-# CONFIG_CXX_EXCEPTIONS is not set
-# default:
-CONFIG_STACK_CHECK_NONE=y
-# default:
-# CONFIG_STACK_CHECK_NORM is not set
-# default:
-# CONFIG_STACK_CHECK_STRONG is not set
-# default:
-# CONFIG_STACK_CHECK_ALL is not set
-# default:
-# CONFIG_WARN_WRITE_STRINGS is not set
-# default:
-# CONFIG_GPTIMER_ISR_IRAM_SAFE is not set
-# default:
-# CONFIG_MCPWM_ISR_IRAM_SAFE is not set
-# default:
-# CONFIG_ESP_SYSTEM_PD_FLASH is not set
-# default:
-CONFIG_ESP32S3_DEEP_SLEEP_WAKEUP_DELAY=2000
-# default:
-CONFIG_ESP_SLEEP_DEEP_SLEEP_WAKEUP_DELAY=2000
-# default:
-CONFIG_ESP32S3_RTC_CLK_SRC_INT_RC=y
-# default:
-# CONFIG_ESP32S3_RTC_CLK_SRC_EXT_CRYS is not set
-# default:
-# CONFIG_ESP32S3_RTC_CLK_SRC_EXT_OSC is not set
-# default:
-# CONFIG_ESP32S3_RTC_CLK_SRC_INT_8MD256 is not set
-# default:
-CONFIG_ESP32S3_RTC_CLK_CAL_CYCLES=1024
-# default:
-CONFIG_PERIPH_CTRL_FUNC_IN_IRAM=y
-# default:
-CONFIG_BROWNOUT_DET=y
-# default:
-CONFIG_ESP32S3_BROWNOUT_DET=y
-# default:
-CONFIG_BROWNOUT_DET_LVL_SEL_7=y
-# default:
-CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_7=y
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_6 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_6 is not set
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_5 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_5 is not set
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_4 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_4 is not set
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_3 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_3 is not set
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_2 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_2 is not set
-# default:
-# CONFIG_BROWNOUT_DET_LVL_SEL_1 is not set
-# default:
-# CONFIG_ESP32S3_BROWNOUT_DET_LVL_SEL_1 is not set
-# default:
-CONFIG_BROWNOUT_DET_LVL=7
-# default:
-CONFIG_ESP32S3_BROWNOUT_DET_LVL=7
-# default:
-CONFIG_ESP_SYSTEM_BROWNOUT_INTR=y
-# default:
-CONFIG_ESP_SYSTEM_PM_POWER_DOWN_CPU=y
-# default:
-CONFIG_PM_POWER_DOWN_TAGMEM_IN_LIGHT_SLEEP=y
-# default:
-# CONFIG_ESP32S3_DEFAULT_CPU_FREQ_80 is not set
-# default:
-CONFIG_ESP32S3_DEFAULT_CPU_FREQ_160=y
-# default:
-# CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240 is not set
-# default:
-CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ=160
-# default:
-CONFIG_SYSTEM_EVENT_QUEUE_SIZE=32
-# default:
-CONFIG_SYSTEM_EVENT_TASK_STACK_SIZE=2304
-# default:
-CONFIG_MAIN_TASK_STACK_SIZE=3584
-# default:
-CONFIG_CONSOLE_UART_DEFAULT=y
-# default:
-# CONFIG_CONSOLE_UART_CUSTOM is not set
-# default:
-# CONFIG_CONSOLE_UART_NONE is not set
-# default:
-# CONFIG_ESP_CONSOLE_UART_NONE is not set
-# default:
-CONFIG_CONSOLE_UART=y
-# default:
-CONFIG_CONSOLE_UART_NUM=0
-# default:
-CONFIG_CONSOLE_UART_BAUDRATE=115200
-# default:
-CONFIG_INT_WDT=y
-# default:
-CONFIG_INT_WDT_TIMEOUT_MS=300
-# default:
-CONFIG_INT_WDT_CHECK_CPU1=y
-# default:
-CONFIG_TASK_WDT=y
-# default:
-CONFIG_ESP_TASK_WDT=y
-# default:
-# CONFIG_TASK_WDT_PANIC is not set
-# default:
-CONFIG_TASK_WDT_TIMEOUT_S=5
-# default:
-CONFIG_TASK_WDT_CHECK_IDLE_TASK_CPU0=y
-# default:
-CONFIG_TASK_WDT_CHECK_IDLE_TASK_CPU1=y
-# default:
-# CONFIG_ESP32_DEBUG_STUBS_ENABLE is not set
-# default:
-CONFIG_ESP32S3_DEBUG_OCDAWARE=y
-# default:
-CONFIG_IPC_TASK_STACK_SIZE=1280
-# default:
-CONFIG_TIMER_TASK_STACK_SIZE=3584
-# default:
-CONFIG_TIMER_TASK_PRIORITY=1
-# default:
-CONFIG_TIMER_TASK_STACK_DEPTH=2048
-# default:
-CONFIG_TIMER_QUEUE_LENGTH=10
-# default:
-# CONFIG_ENABLE_STATIC_TASK_CLEAN_UP_HOOK is not set
-# default:
-# CONFIG_HAL_ASSERTION_SILIENT is not set
-# default:
-# CONFIG_NEWLIB_NANO_FORMAT is not set
-# default:
-CONFIG_NEWLIB_TIME_SYSCALL_USE_RTC_HRT=y
-# default:
-CONFIG_ESP32S3_TIME_SYSCALL_USE_RTC_SYSTIMER=y
-# default:
-CONFIG_ESP32S3_TIME_SYSCALL_USE_RTC_FRC1=y
-# default:
-# CONFIG_NEWLIB_TIME_SYSCALL_USE_RTC is not set
-# default:
-# CONFIG_ESP32S3_TIME_SYSCALL_USE_RTC is not set
-# default:
-# CONFIG_NEWLIB_TIME_SYSCALL_USE_HRT is not set
-# default:
-# CONFIG_ESP32S3_TIME_SYSCALL_USE_SYSTIMER is not set
-# default:
-# CONFIG_ESP32S3_TIME_SYSCALL_USE_FRC1 is not set
-# default:
-# CONFIG_NEWLIB_TIME_SYSCALL_USE_NONE is not set
-# default:
-# CONFIG_ESP32S3_TIME_SYSCALL_USE_NONE is not set
-# default:
-CONFIG_ESP32_PTHREAD_TASK_PRIO_DEFAULT=5
-# default:
-CONFIG_ESP32_PTHREAD_TASK_STACK_SIZE_DEFAULT=3072
-# default:
-CONFIG_ESP32_PTHREAD_STACK_MIN=768
-# default:
-CONFIG_ESP32_DEFAULT_PTHREAD_CORE_NO_AFFINITY=y
-# default:
-# CONFIG_ESP32_DEFAULT_PTHREAD_CORE_0 is not set
-# default:
-# CONFIG_ESP32_DEFAULT_PTHREAD_CORE_1 is not set
-# default:
-CONFIG_ESP32_PTHREAD_TASK_CORE_DEFAULT=-1
-# default:
-CONFIG_ESP32_PTHREAD_TASK_NAME_DEFAULT="pthread"
-# default:
-CONFIG_SPI_FLASH_WRITING_DANGEROUS_REGIONS_ABORTS=y
-# default:
-# CONFIG_SPI_FLASH_WRITING_DANGEROUS_REGIONS_FAILS is not set
-# default:
-# CONFIG_SPI_FLASH_WRITING_DANGEROUS_REGIONS_ALLOWED is not set
-# End of deprecated options

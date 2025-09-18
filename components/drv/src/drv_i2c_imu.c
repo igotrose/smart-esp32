@@ -572,7 +572,7 @@ void i2c_imu_example_task(void* arg)
             dev_imu_get_eulerian_angels(dev_imu.acc, dev_imu.gyr, dev_imu.ang, IMU_DELTA_T);
         }
 
-#if 1
+#if 0
         ESP_LOGI(TAG, "Temperature = %.2f °C", dev_imu.temperature);
         if (imu_calibrated)
         {

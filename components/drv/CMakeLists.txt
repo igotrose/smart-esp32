@@ -3,12 +3,16 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                             "src/drv_i2c_imu.c"
                             "src/drv_sdio_sdcard.c" 
                             "src/drv_i2c_io_expander.c"
+                            "src/drv_spi_lcd.c"
                     INCLUDE_DIRS 
                             "inc"
                     REQUIRES 
                         esp_driver_gpio
                         esp_driver_sdmmc  
-                        esp_driver_i2c                      
+                        esp_driver_i2c  
+                        esp_driver_spi 
+                        esp_driver_ledc   
+                        esp_lcd                
                         sdmmc
                         fatfs
                         driver)

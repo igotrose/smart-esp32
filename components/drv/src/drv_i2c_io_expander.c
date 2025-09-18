@@ -119,32 +119,12 @@ esp_err_t dev_io_expander_init(void)
         ESP_LOGE(TAG, "dev_i2c_bus_add_devices failed, ret:%d", ret);
         return ret;
     }
-#if 0
+#if 1
     uint8_t mode, pin_value;
-    esp_err_t ret = dev_io_expander_set_mode(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, 0);
-    if(ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to set mode of IO0, IO1, IO2");
-    }
-    ret = dev_io_expander_get_mode(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, &mode);
-    if (ret)
-    {
-        ESP_LOGE(TAG, "Failed to get mode of IO0, IO1, IO2");
-    }
-    ESP_LOGI(TAG, "Already set mode of IO0, IO1, IO2, mode:%d", mode);
-
-    ret = dev_io_expander_set_output_value(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, 1);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to set output value of IO0, IO1, IO2");
-    }
-    ESP_LOGI(TAG, "Set output value of IO0, IO1, IO2");
-    ret = dev_io_expander_get_output_value(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, &pin_value);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to get output value of IO0, IO1, IO2");
-    }
-    ESP_LOGI(TAG, "Get output value of IO0, IO1, IO2, pin_value:%d", pin_value);
+    dev_io_expander_set_mode(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, 0);
+    dev_io_expander_get_mode(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, &mode);
+    dev_io_expander_set_output_value(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, 1);
+    dev_io_expander_get_output_value(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, &pin_value);
 #endif
     
     return ESP_OK;
@@ -164,6 +144,8 @@ void aiot_esp32_s3_04_demo_io_expander(void)
     ESP_LOGI(TAG, "Prolarity Inversion: 0x%02x", default_command[2]);
     ESP_LOGI(TAG, "Configuration: 0x%02x", default_command[3]);
 #endif
+
+#if 0
     uint8_t mode, pin_value;
     esp_err_t ret = dev_io_expander_set_mode(IO_EXPANDER_IO0 | IO_EXPANDER_IO1 | IO_EXPANDER_IO2, 0);
     if(ret != ESP_OK)
@@ -189,6 +171,7 @@ void aiot_esp32_s3_04_demo_io_expander(void)
         ESP_LOGE(TAG, "Failed to get output value of IO0, IO1, IO2");
     }
     ESP_LOGI(TAG, "Get output value of IO0, IO1, IO2, pin_value:%d", pin_value);
+#endif
 }
 
 
