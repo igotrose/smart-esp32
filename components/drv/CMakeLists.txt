@@ -4,6 +4,7 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                             "src/drv_sdio_sdcard.c" 
                             "src/drv_i2c_io_expander.c"
                             "src/drv_spi_lcd.c"
+                            "src/drv_dvp_cam.c"
                     INCLUDE_DIRS 
                             "inc"
                     REQUIRES 

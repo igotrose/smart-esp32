@@ -1,2 +1,2 @@
 idf_component_register(SRCS "main.c"
-                    REQUIRES esp_driver_gpio esp_driver_i2c spi_flash drv app)
+                    REQUIRES spi_flash drv app)
