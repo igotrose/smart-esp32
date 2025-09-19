@@ -19,6 +19,8 @@
 #include "drv_sdio_sdcard.h"
 #include "drv_i2c_io_expander.h"
 #include "drv_spi_lcd.h"
+#include "drv_dvp_cam.h"
+
 
 static void aiot_esp32_s3_chip_info(void)
 {
@@ -60,6 +62,8 @@ static void aiot_esp32_s3_all_init(void)
     dev_io_expander_init();
     
     dev_spi_lcd_init();
+
+    dev_dvp_cam_init();
 }
 
 void app_main(void)
@@ -70,6 +74,8 @@ void app_main(void)
     aiot_esp32_s3_03_demo_sdio_sdcard();
     aiot_esp32_s3_04_demo_io_expander();
     aiot_esp32_s3_05_demo_spi_lcd();
+    aiot_esp32_s3_06_demo_dvp_cam();
+
 }
 
 

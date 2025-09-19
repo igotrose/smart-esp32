@@ -38,6 +38,6 @@ direct_dependencies:
 - espressif/esp32-camera
 - idf
 - lvgl/lvgl
-manifest_hash: fe123d1d4e11d5c05f5752d7686842f1fcaa7c4787e11b131059d8ae82d46f9b
+manifest_hash: bb23a78475294e3278d13fe2cce25ed042a3f1647974f5bf48b48f016e50f2f0
 target: esp32s3
 version: 2.0.0

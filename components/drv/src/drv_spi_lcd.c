@@ -3,10 +3,10 @@
 
 static char* TAG = "DRV_SPI_BUS";
 static spi_bus_config_t spi_config = { 0 };
-static esp_lcd_panel_io_handle_t io_handle = NULL;
 static esp_lcd_panel_io_spi_config_t io_config = { 0 };
 static esp_lcd_panel_dev_config_t panel_config = { 0 };
-static esp_lcd_panel_handle_t panel_handle = NULL;
+esp_lcd_panel_io_handle_t io_handle = NULL;
+esp_lcd_panel_handle_t panel_handle = NULL;
 
 esp_err_t dev_lcd_backlight_init(void)
 {
@@ -15,7 +15,7 @@ esp_err_t dev_lcd_backlight_init(void)
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .channel = DEV_LCD_LEDC_CH,
         .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = 1,
+        .timer_sel = 0,
         .duty = 0,
         .hpoint = 0,
         .flags.output_invert = true,
@@ -23,7 +23,7 @@ esp_err_t dev_lcd_backlight_init(void)
     const ledc_timer_config_t lcd_backlight_timer = {
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .duty_resolution = LEDC_TIMER_10_BIT,
-        .timer_num = 1,
+        .timer_num = 0,
         .freq_hz = 5000,
         .clk_cfg = LEDC_AUTO_CLK,
     };
@@ -89,11 +89,11 @@ esp_err_t dev_spi_lcd_init(void)
      
     io_config.dc_gpio_num = DEV_LCD_DC;
     io_config.cs_gpio_num = BSP_SPI_CS;
-    io_config.pclk_hz = 10000000;
+    io_config.pclk_hz = DEV_LCD_PIXEL_CLOCK_HZ;
     io_config.lcd_cmd_bits = DEV_LCD_CMD_BITS;
     io_config.lcd_param_bits = DEV_LCD_PARAM_BITS;
     io_config.spi_mode = 2;
-    io_config.trans_queue_depth = 10;
+    io_config.trans_queue_depth = 20;
 
     ret = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)BSP_SPI_HOST, &io_config, &io_handle);
     if (ret != ESP_OK)

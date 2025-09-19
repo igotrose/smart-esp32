@@ -16,4 +16,6 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                         esp_lcd                
                         sdmmc
                         fatfs
-                        driver)
+                        driver
+                        esp32-camera
+                        )
