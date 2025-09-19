@@ -16,3 +16,4 @@ dependencies:
   #   public: true
   lvgl/lvgl: 9.2.0
   espressif/esp32-camera: '*'
+  espressif/esp_lcd_touch_ft5x06: ==1.0.0
