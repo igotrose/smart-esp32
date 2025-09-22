@@ -1,4 +1,14 @@
 dependencies:
+  espressif/es7210:
+    component_hash: 761ac59d31d8babb01f6338045cc877f2a75027bae9823a4e4d0b6e5b6f63faf
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.4,<6.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.1~1
   espressif/esp32-camera:
     component_hash: b209707f12aff1683c5c9dfaff3fa60f0eca687f2bf74f133cdef68fbae86028
     dependencies:
@@ -34,35 +44,36 @@ dependencies:
       type: service
     version: 1.1.2
   espressif/esp_lcd_touch_ft5x06:
-    component_hash: db480213e061f75f0b94254203e251dc9ee1a79b605e150a69c9c89eb2a0b2dc
+    component_hash: abaec05f46a793549b60afdda9eff86e3c8e87782c8c169007911232388d2858
     dependencies:
-    - name: idf
-      require: private
-      version: '>=5.0'
     - name: espressif/esp_lcd_touch
       registry_url: https://components.espressif.com
+      require: public
+      version: ^1.0.4
+    - name: idf
       require: private
-      version: ^1.0
+      version: '>=4.4.2'
     source:
       registry_url: https://components.espressif.com/
       type: service
-    version: 1.0.0
+    version: 1.0.7
   idf:
     source:
       type: idf
-    version: 6.0.0
+    version: 5.5.0
   lvgl/lvgl:
-    component_hash: 2409fdc84e9766d2a18afd84b051aef3f838348136cdb1c10ac2e8bcdb012bf6
+    component_hash: b702d642e03e95928046d5c6726558e6444e112420c77efa5fdb6650b0a13c5d
     dependencies: []
     source:
       registry_url: https://components.espressif.com/
       type: service
-    version: 9.2.0
+    version: 9.3.0
 direct_dependencies:
+- espressif/es7210
 - espressif/esp32-camera
 - espressif/esp_lcd_touch_ft5x06
 - idf
 - lvgl/lvgl
-manifest_hash: ac3955df560e9faaaac1530e641d2518e14a32c48e774883664188c79bf7bd25
+manifest_hash: 2e03705fb0bd821f493eb4be77c5254b39eeb9939253a7c09a1ecc5a02d5da98
 target: esp32s3
 version: 2.0.0
