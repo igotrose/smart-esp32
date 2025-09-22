@@ -2,7 +2,7 @@
 
 static const char* TAG = "DRV_I2C_BUS";
 
-static i2c_master_bus_handle_t  i2c_bus_handle = NULL;
+i2c_master_bus_handle_t  i2c_bus_handle = NULL;
 
 esp_err_t dev_i2c_bus_init(void)
 {

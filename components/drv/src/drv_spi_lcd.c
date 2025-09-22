@@ -3,7 +3,7 @@
 
 static char* TAG = "DRV_SPI_BUS";
 static spi_bus_config_t spi_config = { 0 };
-static esp_lcd_panel_io_spi_config_t io_config = { 0 };
+static esp_lcd_panel_io_spi_config_t lcd_io_config = { 0 };
 static esp_lcd_panel_dev_config_t panel_config = { 0 };
 esp_lcd_panel_io_handle_t io_handle = NULL;
 esp_lcd_panel_handle_t panel_handle = NULL;
@@ -87,15 +87,15 @@ esp_err_t dev_spi_lcd_init(void)
 
     ESP_LOGI(TAG, "Initialize Panel IO");
      
-    io_config.dc_gpio_num = DEV_LCD_DC;
-    io_config.cs_gpio_num = BSP_SPI_CS;
-    io_config.pclk_hz = DEV_LCD_PIXEL_CLOCK_HZ;
-    io_config.lcd_cmd_bits = DEV_LCD_CMD_BITS;
-    io_config.lcd_param_bits = DEV_LCD_PARAM_BITS;
-    io_config.spi_mode = 2;
-    io_config.trans_queue_depth = 20;
+    lcd_io_config.dc_gpio_num = DEV_LCD_DC;
+    lcd_io_config.cs_gpio_num = BSP_SPI_CS;
+    lcd_io_config.pclk_hz = DEV_LCD_PIXEL_CLOCK_HZ;
+    lcd_io_config.lcd_cmd_bits = DEV_LCD_CMD_BITS;
+    lcd_io_config.lcd_param_bits = DEV_LCD_PARAM_BITS;
+    lcd_io_config.spi_mode = 2;
+    lcd_io_config.trans_queue_depth = 20;
 
-    ret = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)BSP_SPI_HOST, &io_config, &io_handle);
+    ret = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)BSP_SPI_HOST, &lcd_io_config, &io_handle);
     if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize panel IO");
