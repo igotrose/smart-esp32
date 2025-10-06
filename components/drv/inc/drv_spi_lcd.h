@@ -44,12 +44,15 @@ extern esp_lcd_panel_handle_t panel_handle;
 esp_err_t dev_spi_bus_init(void);
 
 esp_err_t dev_lcd_backlight_init(void);
+esp_err_t dev_lcd_backlight_on(void);
 esp_err_t dev_lcd_backlight_set(int brightness_percent);
 
 esp_err_t dev_spi_lcd_init(void);
 
 void dev_lcd_set_color(uint16_t color);
 void dev_lcd_draw_picture(int x_start, int y_start, int x_end, int y_end, const unsigned char* gImage);
+
+esp_err_t dev_lcd_init(void);
 
 void aiot_esp32_s3_05_demo_spi_lcd(void);
 

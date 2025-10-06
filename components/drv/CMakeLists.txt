@@ -6,7 +6,7 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                             "src/drv_spi_lcd.c"
                             "src/drv_dvp_cam.c"
                             "src/drv_i2c_touch.c"
-                            "src/drv_i2s_bus.c"
+                            "src/drv_i2s_audio.c"
                     INCLUDE_DIRS 
                             "inc"
                     REQUIRES 
@@ -22,4 +22,8 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                         esp32-camera
                         espressif__esp_lcd_touch_ft5x06
                         esp_driver_i2s
+                        espressif__esp_codec_dev
+                        espressif__esp_audio_codec
+                        espressif__es8311
+                        espressif__es7210
                         )

@@ -17,13 +17,12 @@
 #define BSP_SD_DAT0         GPIO_NUM_21
 
 
-esp_err_t bsp_sdio_init(void);
+esp_err_t dev_sdio_sdcard_init(void);
 
 esp_err_t dev_sdcard_write_file(const char* path, char* data);
 esp_err_t dev_sdcard_read_file(const char* path);
 esp_err_t dev_sdcard_get_status(sdmmc_card_t* card);
 
-#define dev_sdcard_init     bsp_sdio_init
 esp_err_t dev_sdcard_umount(void);
 
 void aiot_esp32_s3_03_demo_sdio_sdcard(void);

@@ -6,7 +6,7 @@
 sdmmc_card_t* card;
 static uint8_t sdmmc_mount_flag = 0x00;
 
-esp_err_t bsp_sdio_init(void)
+esp_err_t dev_sdio_sdcard_init(void)
 {
     esp_vfs_fat_sdmmc_mount_config_t mount_config = {
         .allocation_unit_size = 16 * 1024,
@@ -111,7 +111,6 @@ esp_err_t dev_sdcard_umount(void)
 }
 void aiot_esp32_s3_03_demo_sdio_sdcard(void)
 {
-    dev_sdcard_init();
     dev_sdcard_write_file("/sdcard/test.txt", "Hello, world!\n");
     dev_sdcard_read_file("/sdcard/test.txt");
     dev_sdcard_get_status(card);

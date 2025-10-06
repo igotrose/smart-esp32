@@ -205,23 +205,28 @@ esp_err_t dev_lcd_backlight_off(void)
     return dev_lcd_backlight_set(0);
 }
 
-void aiot_esp32_s3_05_demo_spi_lcd(void)
+esp_err_t dev_lcd_init(void)
 {
     esp_err_t ret;
-    ESP_LOGI(TAG, "Start SPI LCD demo");
     ret = esp_lcd_panel_disp_on_off(panel_handle, true);
     if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to turn on display");
-        return;
+        return ret ;
     }
     ret = dev_lcd_backlight_on();
     if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to turn on backlight");
-        return;
+        return ret;
     }
+    return ESP_OK;
+}
 
+void aiot_esp32_s3_05_demo_spi_lcd(void)
+{
+    ESP_LOGI(TAG, "Start SPI LCD demo");
+   
     ESP_LOGI(TAG, "Set color");
     dev_lcd_set_color(0xf800);
 
