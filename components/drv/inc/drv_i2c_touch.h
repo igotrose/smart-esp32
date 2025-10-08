@@ -9,6 +9,9 @@
 #include "esp_err.h"
 #include "esp_lcd_io_i2c.h"
 
+extern esp_lcd_touch_handle_t tp;
+
+
 esp_err_t dev_i2c_touch_init(void);
 void aiot_esp32_s3_07_demo_i2c_touch(void);
 

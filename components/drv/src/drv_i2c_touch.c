@@ -28,8 +28,8 @@ esp_err_t dev_i2c_touch_init(void)
             .interrupt = 0,
         },
         .flags = {
-            .swap_xy = 0,
-            .mirror_x = 0,
+            .swap_xy = 1,
+            .mirror_x = 1,
             .mirror_y = 0,
         },
     };
@@ -57,6 +57,11 @@ static void dev_i2c_touch_task(void* arg)
     uint16_t touch_strength[1];
     uint8_t touch_cnt = 0;
 
+    #define FILTER_SAMPLES 3
+    uint16_t x_buf[FILTER_SAMPLES] = {0};
+    uint16_t y_buf[FILTER_SAMPLES] = {0};
+    uint8_t sample_count = 0;
+
     while (1)
     {
         esp_lcd_touch_read_data(tp);
@@ -64,12 +69,33 @@ static void dev_i2c_touch_task(void* arg)
 
         if (touched && touch_cnt > 0)
         {
-            ESP_LOGI(TAG, "Touch at (%d, %d) with strength %d", touch_x[0], touch_y[0], touch_strength[0]);
+            x_buf[sample_count] = touch_x[0];
+            y_buf[sample_count] = touch_y[0];
+            sample_count++;
+
+            if (sample_count >= FILTER_SAMPLES)
+            {
+                uint32_t x_avg = 0, y_avg = 0;
+                for (int i = 0; i < FILTER_SAMPLES; i++)
+                {
+                    x_avg += x_buf[i];
+                    y_avg += y_buf[i];
+                }
+                x_avg /= FILTER_SAMPLES;
+                y_avg /= FILTER_SAMPLES;
+
+                ESP_LOGI(TAG, "Touch at (%d, %d) with strength %d", (uint16_t)x_avg, (uint16_t)y_avg, touch_strength[0]);
+
+                sample_count = 0;
+            }
+        }
+        else
+        {
+            sample_count = 0;
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
-
 }
 
 void aiot_esp32_s3_07_demo_i2c_touch(void)

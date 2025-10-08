@@ -1,3 +1,7 @@
-idf_component_register(SRCS ""
+idf_component_register(SRCS "src/app_ui_lvgl.c"
                     INCLUDE_DIRS "inc"
-                    REQUIRES drv)
+                    REQUIRES 
+                    drv 
+                    lvgl__lvgl
+                    espressif__esp_lvgl_port
+                    )
