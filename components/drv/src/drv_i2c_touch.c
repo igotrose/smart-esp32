@@ -19,8 +19,8 @@ esp_err_t dev_i2c_touch_init(void)
         }
     };
     esp_lcd_touch_config_t tp_cfg = {
-        .x_max = DEV_LCD_H_RES,
-        .y_max = DEV_LCD_V_RES,
+        .x_max = DEV_LCD_V_RES,
+        .y_max = DEV_LCD_H_RES,
         .rst_gpio_num = -1,
         .int_gpio_num = -1,
         .levels = {

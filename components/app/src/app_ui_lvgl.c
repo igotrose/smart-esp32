@@ -31,17 +31,10 @@ void app_ui_lvgl_init(void)
 
     disp = lvgl_port_add_disp(&display_cfg);
 
-    lv_coord_t hor_res = DEV_LCD_H_RES;
-    lv_coord_t ver_res = DEV_LCD_V_RES;
-    
 
     const lvgl_port_touch_cfg_t touch_cfg = {
         .disp = disp,
         .handle = tp,
-        .scale = {
-            .x = 0,
-            .y = 0,
-        },
     };
 
     indev = lvgl_port_add_touch(&touch_cfg);
