@@ -10,6 +10,7 @@ idf_component_register(SRCS "src/drv_gpio_key.c"
                     INCLUDE_DIRS 
                             "inc"
                     REQUIRES 
+                        app
                         esp_driver_gpio
                         esp_driver_sdmmc  
                         esp_driver_i2c  

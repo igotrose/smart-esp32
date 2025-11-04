@@ -23,6 +23,7 @@
 #include "drv_i2s_audio.h"
 
 #include "app_ui_lvgl.h"
+#include "app_nvs_storage.h"
 
 static void aiot_esp32_s3_chip_info(void)
 {
@@ -60,7 +61,10 @@ static void aiot_esp32_s3_all_init(void)
     dev_i2c_bus_init();
     dev_imu_init();
     dev_io_expander_init();
+
+    app_nvs_storage_init();
     dev_sdio_sdcard_init();
+
     dev_spi_lcd_init();
     dev_lcd_init();
     dev_dvp_cam_init();
@@ -80,9 +84,9 @@ void app_main(void)
     // aiot_esp32_s3_04_demo_io_expander();
     // aiot_esp32_s3_05_demo_spi_lcd();
     // aiot_esp32_s3_06_demo_dvp_cam();
-    aiot_esp32_s3_07_demo_i2c_touch();
+    // aiot_esp32_s3_07_demo_i2c_touch();
     // aiot_esp32_s3_08_demo_i2s_audio();
-    aiot_esp32_s3_09_demo_lvgl();
+    // aiot_esp32_s3_09_demo_lvgl();
 }
 
 

@@ -31,7 +31,6 @@ void app_ui_lvgl_init(void)
 
     disp = lvgl_port_add_disp(&display_cfg);
 
-
     const lvgl_port_touch_cfg_t touch_cfg = {
         .disp = disp,
         .handle = tp,
@@ -42,7 +41,7 @@ void app_ui_lvgl_init(void)
 
 void aiot_esp32_s3_09_demo_lvgl(void)
 {
-    // lv_demo_benchmark();
+    lv_demo_benchmark();
     // lv_demo_stress();
-    lv_demo_widgets();
+    // lv_demo_widgets();
 }

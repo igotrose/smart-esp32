@@ -10,6 +10,8 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#include "app_nvs_storage.h"
+
 #define MOUNT_POINT "/sdcard"
 
 #define BSP_SD_CLK          GPIO_NUM_47
