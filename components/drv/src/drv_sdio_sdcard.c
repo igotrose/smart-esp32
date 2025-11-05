@@ -8,8 +8,6 @@ static uint8_t sdmmc_mount_flag = 0x00;
 
 esp_err_t dev_sdio_sdcard_init(void)
 {
-    bool is_initialized = app_nvs_storage_is_sdcard_initialized();
-
     esp_vfs_fat_sdmmc_mount_config_t mount_config = {
         .allocation_unit_size = 16 * 1024,
         .format_if_mount_failed = false,
@@ -45,24 +43,9 @@ esp_err_t dev_sdio_sdcard_init(void)
         }
         return ESP_FAIL;
     }
+
     ESP_LOGI(TAG, "Filesystem mounted");
 
-    if (!is_initialized)
-    {
-        esp_err_t nvs_ret = app_nvs_storage_set_sdcard_initialized(true);
-        if (nvs_ret == ESP_OK)
-        {
-            ESP_LOGI(TAG, "SD Card marked as initialized in NVS");
-        }
-        else
-        {
-            ESP_LOGW(TAG, "Failed to mark SD Card as initialized in NVS. Error: %d", nvs_ret);
-        }
-    }
-    else
-    {
-        ESP_LOGI(TAG, "SD Card already marked as initialized in NVS");
-    }
     sdmmc_card_print_info(stdout, card);
     sdmmc_mount_flag = 0x01;
     

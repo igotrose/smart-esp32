@@ -18,7 +18,7 @@ void app_nvs_storage_init(void)
 bool app_nvs_storage_is_sdcard_initialized(void)
 {
     nvs_handle_t handle;
-    esp_err_t err = nvs_open("storage", NVS_READONLY, &handle);
+    esp_err_t err = nvs_open("storage", NVS_READWRITE, &handle);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error opening NVS handle. Error code: %d", err);
@@ -31,17 +31,17 @@ bool app_nvs_storage_is_sdcard_initialized(void)
     {
     case ESP_OK:
         ESP_LOGI(TAG, "SD Card Initialized value is: %d", sdcard_initialized);
-        break;
+        nvs_close(handle);
+        return sdcard_initialized != 0;
     case ESP_ERR_NVS_NOT_FOUND:
         ESP_LOGI(TAG, "The value is not initialized yet!");
-        break;
+        nvs_close(handle);
+        return false;
     default:
         ESP_LOGE(TAG, "Error getting sdcard_initialized value from NVS. Error code: %d", err);
-        break;
+        nvs_close(handle);
+        return false;
     }
-
-    nvs_close(handle);
-    return sdcard_initialized != 0;
 }
 
 esp_err_t app_nvs_storage_set_sdcard_initialized(bool is_initialized)
@@ -54,7 +54,8 @@ esp_err_t app_nvs_storage_set_sdcard_initialized(bool is_initialized)
         return err;
     }
 
-    err = nvs_set_u8(handle, "sdcard_initialized", is_initialized);
+    uint8_t value = is_initialized ? 1 : 0;
+    err = nvs_set_u8(handle, "sdcard_initialized", value);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG, "Error setting sdcard_initialized value in NVS. Error code: %d", err);
@@ -73,5 +74,5 @@ esp_err_t app_nvs_storage_set_sdcard_initialized(bool is_initialized)
     }
 
     nvs_close(handle);
-    return err;
+    return ESP_OK;
 }

@@ -61,10 +61,10 @@ static void aiot_esp32_s3_all_init(void)
     dev_i2c_bus_init();
     dev_imu_init();
     dev_io_expander_init();
-
+    
     app_nvs_storage_init();
     dev_sdio_sdcard_init();
-
+    
     dev_spi_lcd_init();
     dev_lcd_init();
     dev_dvp_cam_init();
