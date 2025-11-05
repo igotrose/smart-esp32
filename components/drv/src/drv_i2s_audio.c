@@ -18,7 +18,7 @@ esp_err_t dev_i2s_bus_init(void)
         ESP_LOGI(TAG, "i2s bus has been initialized");
         return ESP_OK;
     }
-
+    i2s_slot_mode_t channel_fmt = I2S_SLOT_MODE_MONO;
     i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(BSP_I2S_NUM, I2S_ROLE_MASTER);
     chan_cfg.auto_clear = true;
     ret = i2s_new_channel(&chan_cfg, &i2s_tx_handle, &i2s_rx_handle);
@@ -30,7 +30,7 @@ esp_err_t dev_i2s_bus_init(void)
 
     i2s_std_config_t std_cfg = {
         .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(16000),
-        .slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),
+        .slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, channel_fmt),
         .gpio_cfg = {
             .bclk = BSP_I2S_BCK,
             .mclk = BSP_I2S_MCK,
@@ -121,12 +121,7 @@ esp_codec_dev_handle_t dev_audio_codec_speaker_init(void)
         .gpio_if = gpio_if,
         .codec_mode = ESP_CODEC_DEV_WORK_MODE_DAC,
         .pa_pin = GPIO_NUM_NC,
-        .pa_reverted = false,
-        .master_mode = false,
-        .use_mclk = true,
-        .digital_mic = false,
-        .invert_mclk = false,
-        .invert_sclk = false,
+        .use_mclk = false,
         .hw_gain = gain,
     };
 
@@ -163,6 +158,7 @@ esp_codec_dev_handle_t dev_audio_codec_microphone_init(void)
 
     es7210_codec_cfg_t es7210_cfg = {
         .ctrl_if = i2c_cfg_if,
+        .mic_selected = ES7210_SEL_MIC1 | ES7210_SEL_MIC2 | ES7210_SEL_MIC3,
     };
 
     const audio_codec_if_t* es7310_dev = es7210_codec_new(&es7210_cfg);
@@ -204,7 +200,6 @@ esp_err_t dev_audio_codec_init(void)
     return ret;
 }
 
-
 esp_err_t dev_audio_codec_set_fs(uint32_t rate, uint32_t bits_cfg, i2s_slot_mode_t ch)
 {
     esp_err_t ret = ESP_OK;
@@ -245,12 +240,57 @@ esp_err_t dev_audio_codec_mute_set(bool enable)
     return ret;
 }
 
+esp_err_t dev_audio_codec_volume_get(int* volume)
+{
+    esp_err_t ret = ESP_OK;
+    ret = esp_codec_dev_get_out_vol(dev_speaker_hanlde, volume);
+    return ret;
+}
+
 esp_err_t dev_audio_codec_volume_set(int volume, int* volume_set)
 {
     esp_err_t ret = ESP_OK;
     float vol = (float)volume / 100.0;
     ret = esp_codec_dev_set_out_vol(dev_speaker_hanlde, vol);
     return ret;
+}
+
+esp_err_t dev_audio_codec_play(const int16_t* data, int length, TickType_t ticks_to_wait)
+{
+    size_t bytes_write = 0;
+    esp_err_t ret = ESP_OK;
+    if (!dev_speaker_hanlde)
+    {
+        return ESP_FAIL;
+    }
+    ret = esp_codec_dev_write(dev_speaker_hanlde, (void*)data, length);
+
+    return ret;
+}
+
+esp_err_t dev_audio_codec_get_feed_data(bool is_get_raw_channel, int16_t* buffer, int buffer_len)
+{
+    esp_err_t ret = ESP_OK;
+    size_t bytes_read;
+    int audio_chunksize = buffer_len / (sizeof(uint16_t) * ADC_I2S_CHANNEL_NUM);
+    ret = esp_codec_dev_read(dev_microphone_hanlde, (void*)buffer, buffer_len);
+    if (!is_get_raw_channel)
+    {
+        for (int i = 0; i < audio_chunksize; i++)
+        {
+            int16_t ref = buffer[i * ADC_I2S_CHANNEL_NUM + 0];
+            buffer[(ADC_I2S_CHANNEL_NUM - 1) * i + 0] = buffer[i * ADC_I2S_CHANNEL_NUM + 1];
+            buffer[(ADC_I2S_CHANNEL_NUM - 1) * i + 1] = buffer[i * ADC_I2S_CHANNEL_NUM + 3];
+            buffer[(ADC_I2S_CHANNEL_NUM - 1) * i + 2] = ref;
+        }
+    }
+
+    return ret;
+}
+
+char* dev_audio_codec_get_input_format(void)
+{
+    return "RMNM";
 }
 
 void aiot_esp32_s3_08_demo_i2s_audio(void)
