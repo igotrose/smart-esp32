@@ -23,7 +23,10 @@
 #include "drv_i2s_audio.h"
 
 #include "app_ui_lvgl.h"
-#include "app_nvs_storage.h"
+#include "app_storage_nvs.h"
+#include "app_voice_sr.h"
+
+static char* TAG = "SMART-ESP32-S3";
 
 static void aiot_esp32_s3_chip_info(void)
 {
@@ -62,7 +65,7 @@ static void aiot_esp32_s3_all_init(void)
     dev_imu_init();
     dev_io_expander_init();
     
-    app_nvs_storage_init();
+    app_storage_nvs_init();
     dev_sdio_sdcard_init();
     
     dev_spi_lcd_init();
@@ -73,6 +76,7 @@ static void aiot_esp32_s3_all_init(void)
     dev_audio_codec_init();
 
     app_ui_lvgl_init();
+    app_voice_sr_init();
 }
 
 void app_main(void)
@@ -87,6 +91,13 @@ void app_main(void)
     // aiot_esp32_s3_07_demo_i2c_touch();
     // aiot_esp32_s3_08_demo_i2s_audio();
     // aiot_esp32_s3_09_demo_lvgl();
+
+    ESP_LOGI(TAG, "Free memory after start: %d bytes", heap_caps_get_total_size(MALLOC_CAP_INTERNAL));
+
+    while (1)
+    {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 }
 
 

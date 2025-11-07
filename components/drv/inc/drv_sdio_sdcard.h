@@ -10,7 +10,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-#include "app_nvs_storage.h"
+#include "app_storage_nvs.h"
 
 #define MOUNT_POINT "/sdcard"
 

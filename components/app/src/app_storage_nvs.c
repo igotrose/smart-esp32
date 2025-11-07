@@ -1,8 +1,8 @@
-#include "app_nvs_storage.h"
+#include "app_storage_nvs.h"
 
-static const char* TAG = "APP_NVS_STORAGE";
+static const char* TAG = "APP_STORAGE_NVS";
 
-void app_nvs_storage_init(void)
+void app_storage_nvs_init(void)
 {
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
@@ -15,7 +15,7 @@ void app_nvs_storage_init(void)
     ESP_LOGI(TAG, "NVS initialized successfully");
 }
 
-bool app_nvs_storage_is_sdcard_initialized(void)
+bool app_storage_nvs_is_sdcard_initialized(void)
 {
     nvs_handle_t handle;
     esp_err_t err = nvs_open("storage", NVS_READWRITE, &handle);
@@ -44,7 +44,7 @@ bool app_nvs_storage_is_sdcard_initialized(void)
     }
 }
 
-esp_err_t app_nvs_storage_set_sdcard_initialized(bool is_initialized)
+esp_err_t app_storage_nvs_set_sdcard_initialized(bool is_initialized)
 {
     nvs_handle_t handle;
     esp_err_t err = nvs_open("storage", NVS_READWRITE, &handle);

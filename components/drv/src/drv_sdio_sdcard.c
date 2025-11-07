@@ -46,9 +46,11 @@ esp_err_t dev_sdio_sdcard_init(void)
 
     ESP_LOGI(TAG, "Filesystem mounted");
 
+#if 0  
     sdmmc_card_print_info(stdout, card);
+#endif
     sdmmc_mount_flag = 0x01;
-    
+
     return ESP_OK;
 }
 
