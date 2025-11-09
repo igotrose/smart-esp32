@@ -33,7 +33,7 @@ static void app_voice_sr_feed_task(void* param)
     ESP_LOGI(TAG, "audio_chunksize = %d, feed_channel = %d", audio_chunksize, channels);
 
     // Allocate audio buffer and check for result 
-    int16_t* audio_buffer = heap_caps_malloc(audio_chunksize* sizeof(int16_t) * 2,  MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    int16_t* audio_buffer = heap_caps_malloc(audio_chunksize * sizeof(int16_t) * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     if (NULL == audio_buffer)
     {
         esp_system_abort("Memory allocation failed for audio buffer");
@@ -70,7 +70,7 @@ static void app_voice_sr_feed_task(void* param)
         }
 #endif
         afe_handle->feed(afe_data, audio_buffer);
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
     free(audio_buffer);
@@ -94,6 +94,7 @@ static void app_voice_sr_detect_task(void* param)
         if (!res || res->ret_value == ESP_FAIL)
         {
             ESP_LOGE(TAG, "Failed to fetch data from AFE");
+            vTaskDelay(pdMS_TO_TICKS(50));
             continue;
         }
         if (res->wakeup_state == WAKENET_DETECTED)
@@ -106,79 +107,81 @@ static void app_voice_sr_detect_task(void* param)
             };
             xQueueSend(result_queue, &result, 10);
         }
-        else if(res->wakeup_state == WAKENET_CHANNEL_VERIFIED)
+        else if (res->wakeup_state == WAKENET_CHANNEL_VERIFIED)
         {
             ESP_LOGI(TAG, "Wake word channel verified");
             detect_flag = true;
             afe_handle->disable_wakenet(afe_data);
         }
-        if (detect_flag)
-        {
-        }
-        vTaskDelay(pdMS_TO_TICKS(1));
+        // if (detect_flag)
+        // {
+        // }
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
+    vTaskDelete(NULL);
 }
 
 static void app_voice_sr_handler_task(void* param)
 {
     QueueHandle_t queue = (QueueHandle_t)param;
-    
+
     while (1)
     {
         sr_result_t result;
-        xQueueReceive(queue, &result, portMAX_DELAY);
-
-        ESP_LOGI(TAG, "Command ID: %d, State: %d, Wakenet Mode: %d", result.command_id, result.state, result.wakenet_mode);
-        if (result.state == ESP_MN_STATE_TIMEOUT)
+        if (xQueueReceive(queue, &result, pdMS_TO_TICKS(100)) == pdTRUE)
         {
-            ESP_LOGW(TAG, "Timeout");
-            continue;
-        }
-        if (result.wakenet_mode == WAKENET_DETECTED)
-        {
-            ESP_LOGI(TAG, "wakenet detected");
-            continue;
-        }
-        if (result.state & ESP_MN_STATE_DETECTED)
-        {
-            ESP_LOGI(TAG, "Multinet detected");
-            switch (result.command_id)
+            ESP_LOGI(TAG, "Command ID: %d, State: %d, Wakenet Mode: %d", result.command_id, result.state, result.wakenet_mode);
+            if (result.state == ESP_MN_STATE_TIMEOUT)
             {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
-            case 9:
-                break;
-            case 10:
-                break;
-            case 11:
-                break;
-            case 12:
-                break;
+                ESP_LOGW(TAG, "Timeout");
+                continue;
+            }
+            if (result.wakenet_mode == WAKENET_DETECTED)
+            {
+                ESP_LOGI(TAG, "wakenet detected");
+                continue;
+            }
+            if (result.state & ESP_MN_STATE_DETECTED)
+            {
+                ESP_LOGI(TAG, "Multinet detected");
+                switch (result.command_id)
+                {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break;
 
-            default:
+                default:
+                }
             }
         }
 
-
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
+
 }
 
 
@@ -256,11 +259,11 @@ esp_err_t app_voice_sr_init(void)
     BaseType_t ret_vel = xTaskCreatePinnedToCore(app_voice_sr_feed_task, "Feed Task", 4 * 1024, afe_data, 5, NULL, 1);
     ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create feed task");
 
-    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_detect_task, "Detect Task", 4 * 1024, afe_data, 5, NULL, 0);
+    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_detect_task, "Detect Task", 6 * 1024, afe_data, 4, NULL, 0);
     ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create detect task");
 
-    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, afe_data, 1, NULL, 1);
-    ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create handler task");
+    // ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, afe_data, 3, NULL, 1);
+    // ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create handler task");
 
     return ESP_OK;
 }

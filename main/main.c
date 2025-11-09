@@ -12,6 +12,7 @@
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp_system.h"
+#include "esp_task_wdt.h"
 
 #include "drv_gpio_key.h"
 #include "drv_i2c_imu.h"
@@ -94,8 +95,11 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Free memory after start: %d bytes", heap_caps_get_total_size(MALLOC_CAP_INTERNAL));
 
+    esp_task_wdt_add(NULL);
+
     while (1)
     {
+        esp_task_wdt_reset();
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
