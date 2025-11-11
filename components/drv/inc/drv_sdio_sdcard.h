@@ -12,6 +12,8 @@
 
 #include "app_storage_nvs.h"
 
+#include <string.h>
+
 #define MOUNT_POINT "/sdcard"
 
 #define BSP_SD_CLK          GPIO_NUM_47

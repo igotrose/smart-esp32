@@ -3,7 +3,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "drv_i2c_bus.h"
-
+#include <string.h>
 #include "math.h"
 
 extern i2c_master_dev_handle_t imu_dev_handle;

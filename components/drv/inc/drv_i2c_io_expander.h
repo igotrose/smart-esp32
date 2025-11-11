@@ -4,6 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "drv_i2c_bus.h"
 #include "driver/i2c_master.h"
+#include <string.h>
 
 #define DEV_IO_EXPANDER_ADDR                    0x19
 

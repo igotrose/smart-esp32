@@ -13,6 +13,8 @@
 #include "driver/spi_common.h"
 #include "driver/spi_master.h"
 
+#include <string.h>
+
 
 #define BSP_SPI_HOST        SPI3_HOST
 
