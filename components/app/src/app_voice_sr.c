@@ -42,33 +42,7 @@ static void app_voice_sr_feed_task(void* param)
 
     while (1)
     {
-        if (i2s_data_if && i2s_data_if->read)
-        {
-            int ret = i2s_data_if->read(i2s_data_if, (uint8_t*)audio_buffer, audio_chunksize * sizeof(int16_t) * channels);
-            if (ret != ESP_CODEC_DEV_OK)
-            {
-                ESP_LOGE(TAG, "Failed to read data from i2s device");
-                vTaskDelay(pdMS_TO_TICKS(10));
-                continue;
-            }
-        }
-        else
-        {
-            ESP_LOGE(TAG, "I2S data interface not initialized");
-            vTaskDelay(pdMS_TO_TICKS(10));
-            continue;
-        }
-#if 0
-        if (channels == 3)
-        {
-            for (int i = audio_chunksize - 1; i >= 0; i--)
-            {
-                audio_buffer[i * 3 + 2] = 0;
-                audio_buffer[i * 3 + 1] = audio_buffer[i * 2 + 1];
-                audio_buffer[i * 3 + 0] = audio_buffer[i * 2 + 0];
-            }
-        }
-#endif
+        dev_audio_codec_get_feed_data(false, audio_buffer, audio_chunksize * sizeof(int16_t) * channels);
         afe_handle->feed(afe_data, audio_buffer);
         vTaskDelay(pdMS_TO_TICKS(10));
     }
@@ -113,11 +87,52 @@ static void app_voice_sr_detect_task(void* param)
             detect_flag = true;
             afe_handle->disable_wakenet(afe_data);
         }
-        // if (detect_flag)
-        // {
-        // }
+        if (detect_flag)
+        {
+            esp_mn_state_t mn_state = multinet->detect(model_data, res->data);
+            if (mn_state == ESP_MN_STATE_DETECTING)
+            {
+                continue;
+            }
+            if (mn_state == ESP_MN_STATE_DETECTED)
+            {
+                ESP_LOGI(TAG, "Multinet detected");
+                esp_mn_results_t* mn_result = multinet->get_results(model_data);
+                for (int i = 0; i < mn_result->num; i++)
+                {
+                    ESP_LOGI(TAG, "TOP %d, command_id: %d, phrase_id: %d, prob: %f",
+                        i + 1, mn_result->command_id[i], mn_result->phrase_id[i], mn_result->prob[i]);
+                }
+                int sr_command_id = mn_result->command_id[0];
+                ESP_LOGI(TAG, "Command ID: %d", sr_command_id);
+                sr_result_t result = {
+                    .wakenet_mode = WAKENET_NO_DETECT,
+                    .state = mn_state,
+                    .command_id = sr_command_id,
+                };
+                xQueueSend(result_queue, &result, 10);
+                continue;
+            }
+            if (mn_state == ESP_MN_STATE_TIMEOUT)
+            {
+                ESP_LOGW(TAG, "Multinet timeout");
+                sr_result_t result = {
+                    .wakenet_mode = WAKENET_NO_DETECT,
+                    .state = mn_state,
+                    .command_id = 0,
+                };
+                xQueueSend(result_queue, &result, 10);
+                afe_handle->enable_wakenet(afe_data);
+                detect_flag = false;
+                continue;
+            }
+
+            ESP_LOGE(TAG, "Exception unhandled");
+        }
         vTaskDelay(pdMS_TO_TICKS(10));
     }
+
+    afe_handle->destroy(afe_data);
 
     vTaskDelete(NULL);
 }
@@ -262,8 +277,8 @@ esp_err_t app_voice_sr_init(void)
     ret_vel = xTaskCreatePinnedToCore(app_voice_sr_detect_task, "Detect Task", 6 * 1024, afe_data, 4, NULL, 0);
     ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create detect task");
 
-    // ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, afe_data, 3, NULL, 1);
-    // ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create handler task");
+    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, afe_data, 3, NULL, 1);
+    ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create handler task");
 
     return ESP_OK;
 }
