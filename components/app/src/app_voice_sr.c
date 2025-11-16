@@ -44,10 +44,14 @@ static void app_voice_sr_feed_task(void* param)
     {
         dev_audio_codec_get_feed_data(false, audio_buffer, audio_chunksize * sizeof(int16_t) * channels);
         afe_handle->feed(afe_data, audio_buffer);
-        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+    if (audio_buffer)
+    {
+        free(audio_buffer);
+        audio_buffer = NULL;
     }
 
-    free(audio_buffer);
+    vTaskDelete(NULL);
 }
 
 static void app_voice_sr_detect_task(void* param)
@@ -139,12 +143,10 @@ static void app_voice_sr_detect_task(void* param)
 
 static void app_voice_sr_handler_task(void* param)
 {
-    QueueHandle_t queue = (QueueHandle_t)param;
-
     while (1)
     {
         sr_result_t result;
-        if (xQueueReceive(queue, &result, pdMS_TO_TICKS(100)) == pdTRUE)
+        if (xQueueReceive(result_queue, &result, pdMS_TO_TICKS(100)) == pdTRUE)
         {
             ESP_LOGI(TAG, "Command ID: %d, State: %d, Wakenet Mode: %d", result.command_id, result.state, result.wakenet_mode);
             if (result.state == ESP_MN_STATE_TIMEOUT)
@@ -277,7 +279,7 @@ esp_err_t app_voice_sr_init(void)
     ret_vel = xTaskCreatePinnedToCore(app_voice_sr_detect_task, "Detect Task", 6 * 1024, afe_data, 4, NULL, 0);
     ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create detect task");
 
-    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, afe_data, 3, NULL, 1);
+    ret_vel = xTaskCreatePinnedToCore(app_voice_sr_handler_task, "Handler Task", 4 * 1024, NULL, 3, NULL, 1);
     ESP_RETURN_ON_FALSE(ret_vel == pdPASS, ESP_FAIL, TAG, "Failed to create handler task");
 
     return ESP_OK;

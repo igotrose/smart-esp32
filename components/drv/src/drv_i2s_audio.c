@@ -215,21 +215,33 @@ esp_err_t dev_audio_codec_set_fs(uint32_t rate, uint32_t bits_cfg, i2s_slot_mode
         ret = esp_codec_dev_close(dev_speaker_hanlde);
         if (ret != ESP_OK)
         {
-            ESP_LOGE(TAG, "esp_codec_dev_close error, ret: %d", ret);
+            ESP_LOGE(TAG, "esp_codec_dev_close speaker error, ret: %d", ret);
             return ret;
         }
-    }
-
-    if (dev_speaker_hanlde)
-    {
         ret = esp_codec_dev_open(dev_speaker_hanlde, &fs);
         if (ret != ESP_OK)
         {
-            ESP_LOGE(TAG, "esp_codec_dev_open error, ret: %d", ret);
+            ESP_LOGE(TAG, "esp_codec_dev_open speaker error, ret: %d", ret);
             return ret;
         }
     }
-
+    ESP_LOGI(TAG, "speaker sample rate: %d, bits_cfg: %d, ch: %d", rate, bits_cfg, ch);
+    if (dev_microphone_hanlde)
+    {
+        ret = esp_codec_dev_close(dev_microphone_hanlde);
+        if (ret != ESP_OK)
+        {
+            ESP_LOGE(TAG, "esp_codec_dev_close microphone error, ret: %d", ret);
+            return ret;
+        }
+        ret = esp_codec_dev_open(dev_microphone_hanlde, &fs);
+        if (ret != ESP_OK)
+        {
+            ESP_LOGE(TAG, "esp_codec_dev_open microphone error, ret: %d", ret);
+            return ret;
+        }
+    }
+    ESP_LOGI(TAG, "microphone sample rate: %d, bits_cfg: %d, ch: %d", rate, bits_cfg, ch);
     return ESP_OK;
 }   
 
